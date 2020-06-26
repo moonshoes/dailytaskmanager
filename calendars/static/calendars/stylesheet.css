@@ -1,0 +1,9 @@
+.bg-navbar {
+    background-color: #F7F7F7;
+}
+
+.bg-main {
+    background-color: #efefef;
+}
+
+.row-cols-7>* {-ms-flex:0 0 14.2857132%;flex:0 0 14.2857132%;max-width:14.2857132%}
