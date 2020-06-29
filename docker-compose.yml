@@ -15,10 +15,23 @@ services:
             - MYSQL_PASSWORD=django_app123
     web:
         build: .
-        command: python3 manage.py runserver 0.0.0.0:8000
+        command: bash -c "python3 manage.py collectstatic --no-input && python3 manage.py migrate && gunicorn --timeout=30 --workers=2 --bind :8000 dailytaskmanager.wsgi:application"
         volumes:
             - .:/code
+            - static-volume:/code/static
         ports:
             - "8000:8000"
         depends_on:
             - db
+    nginx:
+        image: nginx:latest
+        ports:
+            - "3000:8000"
+        volumes:
+            - static-volume:/code/static
+            - ./config/nginx:/etc/nginx/conf.d
+        depends_on:
+            - web
+    
+volumes:
+    static-volume:
