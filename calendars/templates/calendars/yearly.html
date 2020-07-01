@@ -1,0 +1,16 @@
+{% extends "calendars/base.html" %}
+{% block content %}
+    <div class="row h-100 row-cols-4">
+        {% for month in year %}
+            <div class="col">
+                <div class="row row-cols-7">
+                    {% for day in month %}
+                        <div class="col border">
+                            {{ day|date:"j" }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
