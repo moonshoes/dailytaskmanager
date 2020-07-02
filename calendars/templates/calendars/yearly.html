@@ -1,0 +1,25 @@
+{% extends "calendars/base.html" %}
+{% block content %}
+    <div class="row h-100 row-cols-4">
+        {% for month in year %}
+            <div class="col">
+                <div class="row pr-3 py-1 text-right">
+                    <div class="col">
+                        {{ month.monthname }}
+                    </div>
+                </div>
+                <div class="row no-gutters row-cols-7 text-center">
+                    {% for day in month.month %}
+                        <div class="col border rounded
+                                {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
+                                    text-muted
+                                {% endif %}
+                            ">
+                            {{ day|date:"j" }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
