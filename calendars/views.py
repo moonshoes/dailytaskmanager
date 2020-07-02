@@ -20,7 +20,11 @@ def yearly(request):
 
     year = []
     for x in range(1,13):
-        year.append(cal.itermonthdates(today.year, x))
+        monthinfo = {
+            'monthname': calendar.month_name[x],
+            'month': cal.itermonthdates(today.year, x)
+        }
+        year.append(monthinfo)
 
     context = {
         'year': year
