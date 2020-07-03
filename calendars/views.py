@@ -30,3 +30,11 @@ def yearly(request):
         'year': year
     }
     return render(request, 'calendars/yearly.html', context)
+
+def daily(request):
+    today = datetime.date.today()
+    context = {
+        'today': today
+    }
+
+    return render(request, 'calendars/daily.html', context)
