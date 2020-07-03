@@ -1,0 +1,9 @@
+{% extends "calendars/base.html" %}
+{% load calendars_filters %}
+{% block content %}
+<div class="col-9 bg-main mx-3">
+    {% for day in week %}
+        {{ day }}
+    {% endfor %}
+</div>
+{% endblock content %}
