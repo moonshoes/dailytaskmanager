@@ -1,0 +1,28 @@
+{% extends "calendars/base.html" %}
+{% load calendars_filters %}
+{% block content %}
+<div class="col-9 bg-main mx-3 overflow-auto">
+    <div class="row sticky-top">
+        {% for day in week %}
+            <div class="col text-center small">
+                {{ day|date:"D j" }}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row h-100 row-cols-7">
+        {% for day in week %}
+            <div class="col">
+                <div class="row h-200 row-cols-1">
+                    {% for x in 0|range:24 %}
+                        <div class="col border d-flex aligm-items-end flex-column">
+                            {% if forloop.parentloop.first %}
+                                <div class="mt-auto ml-n2 small">{{ x|hour }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

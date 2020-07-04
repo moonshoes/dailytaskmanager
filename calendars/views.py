@@ -38,3 +38,18 @@ def daily(request):
     }
 
     return render(request, 'calendars/daily.html', context)
+
+def weekly(request):
+    cal = calendar.Calendar(0)
+    today = datetime.date.today()
+
+    month = cal.monthdatescalendar(today.year, today.month)
+    for week in month:
+        if today in week:
+            currentWeek = week
+    
+    context = {
+        'week': currentWeek
+    }
+
+    return render(request, 'calendars/weekly.html', context)
