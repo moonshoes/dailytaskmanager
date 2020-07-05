@@ -23,14 +23,25 @@
                     <a class="nav-item nav-link" href="#">Habits</a>
                 </div>
                 <div class="navbar-nav mr-auto">
-                    <form class="form-inline">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Calendar view
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{% url 'calendars-year' %}">Year</a>
+                            <a class="dropdown-item" href="{% url 'calendars-month' %}">Month</a>
+                            <a class="dropdown-item" href="{% url 'calendars-week' %}">Week</a>
+                            <a class="dropdown-item" href="{% url 'calendars-day' %}">Day</a>
+                        </div>
+                    </div>
+                    {% comment %} <form class="form-inline">
                         <select class="custom-select">
                             <option value="yearly">Yearly</option>
                             <option selected value="monthly">Monthly</option>
                             <option value="weekly">Weekly</option>
                             <option value="daily">Daily</option>
                         </select>
-                    </form>
+                    </form> {% endcomment %}
                 </div>
                 <div class="navbar-nav">
                         <a class="nav-item nav-link" href="#">Hi, Elise!</a>
