@@ -1,0 +1,2 @@
+class InvalidMonthNumber(Exception):
+    pass

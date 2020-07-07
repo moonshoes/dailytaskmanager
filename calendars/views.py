@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from .functions import getPreviousMonth, getNextMonth
 import calendar
 import datetime
 import time
@@ -16,17 +17,8 @@ def monthly(request, yearArg=-1, monthArg=-1):
         year = yearArg
         month = monthArg
     
-    if month > 1 and month < 12:
-        prevMonth = month - 1
-        nextMonth = month + 1
-    elif month == 1:
-        prevMonth = 12
-        nextMonth = month + 1
-        year = year - 1
-    else:
-        prevMonth = month + 1
-        nextMonth = 1
-        year = year + 1
+    prevMonth = getPreviousMonth(year, month)
+    nextMonth = getNextMonth(year, month)
 
     context = {
         'prevMonth': prevMonth,
