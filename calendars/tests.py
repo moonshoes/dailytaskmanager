@@ -63,3 +63,5 @@ class TestGetNextMonth(TestCase):
     
     def test_month_thirteen(self):
         self.assertRaises(InvalidMonthNumber, getNextMonth, 2020, 13)
+
+
