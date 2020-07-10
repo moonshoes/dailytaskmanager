@@ -13,7 +13,7 @@
 <body>
     <div class="container-fluid vh-100 p-0">
         <nav class="navbar navbar-expand navbar-light bg-navbar">
-            <a class="navbar-brand" href="#">Daily Task Manager</a>
+            <a class="navbar-brand" href="{% url 'calendars-home' %}">Daily Task Manager</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
             </button>
@@ -23,14 +23,18 @@
                     <a class="nav-item nav-link" href="#">Habits</a>
                 </div>
                 <div class="navbar-nav mr-auto">
-                    <form class="form-inline">
-                        <select class="custom-select">
-                            <option value="yearly">Yearly</option>
-                            <option selected value="monthly">Monthly</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="daily">Daily</option>
-                        </select>
-                    </form>
+                    {% block calendarNavigation %} {% endblock %}
+                    <div class="dropdown nav-item">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Calendar view
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item {% block yearDropdown %} {% endblock %}" href="{% url 'calendars-year' %}">Year</a>
+                            <a class="dropdown-item {% block monthDropdown %} {% endblock %}" href="{% url 'calendars-month' %}">Month</a>
+                            <a class="dropdown-item {% block weekDropdown %} {% endblock %}" href="{% url 'calendars-week' %}">Week</a>
+                            <a class="dropdown-item {% block dayDropdown %} {% endblock %}" href="{% url 'calendars-day' %}">Day</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="navbar-nav">
                         <a class="nav-item nav-link" href="#">Hi, Elise!</a>
@@ -40,6 +44,13 @@
         </nav>
 
         <div class="container-fluid h-75">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
             <div class="row mt-3 h-100">
                 {% block content %} {% endblock %}
                 <div class="col-sm mr-3">

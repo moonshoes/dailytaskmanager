@@ -83,6 +83,9 @@ DATABASES = {
         'HOST': 'db',
         'PORT': '3306',
         'CHARSET': 'utf8',
+        'TEST': {
+            'NAME': 'test_django_app',
+        },
     }
 }
 
