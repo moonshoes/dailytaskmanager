@@ -11,9 +11,7 @@ from .functions import (
     getYearList
 )
 from .exceptions import InvalidMonthNumber, InvalidYearNumber
-import calendar
-import datetime
-import time
+import calendar, datetime
 
 def home(request):
     return redirect('calendars-month')
