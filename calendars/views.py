@@ -1,5 +1,9 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.views.generic import CreateView
+from .models import Task
+from calendars.forms import TaskForm
 from .functions import (
     getPreviousDay,
     getPreviousMonth,
@@ -42,7 +46,7 @@ def monthly(request, yearArg=-1, monthArg=-1):
             'month': calendar.month_name[month],
             'nextMonth': nextMonth,
             'year': year,
-            'monthList': cal.itermonthdates(year, month)
+            'monthList': cal.itermonthdates(year, month),
         }
 
         return render(request, 'calendars/monthly.html', context)
@@ -114,3 +118,16 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         }
 
         return render(request, 'calendars/weekly.html', context)
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    success_message = "A new task has been created!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+

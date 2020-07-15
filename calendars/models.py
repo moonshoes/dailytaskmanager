@@ -15,3 +15,6 @@ class Task(CalendarEntry):
 
     class Meta:
         db_table = "task"
+
+    def __str__(self):
+        return self.name

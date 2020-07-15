@@ -1,0 +1,21 @@
+{% extends 'calendars/baseModal.html' %}
+{% load crispy_forms_tags %}
+
+{% block formBeginning %}
+    <form action="" method="post">
+        {% csrf_token %}
+{% endblock %}
+
+{% block modalBody %}
+    {{ form|crispy }}
+{% endblock %}
+
+{% block submitButton %}
+    <button type="submit" class="btn btn-primary">
+        {% block submitButtonText%} {% endblock %}
+    </button>
+{% endblock %}
+
+{% block formEnd %}
+    </form>
+{% endblock %}
