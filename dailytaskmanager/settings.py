@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'tempus_dominus',
     'bootstrap_modal_forms',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

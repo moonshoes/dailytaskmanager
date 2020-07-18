@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.views.generic import CreateView
+from bootstrap_modal_forms.generic import BSModalCreateView
 from .models import Task
 from calendars.forms import TaskForm
 from .functions import (
@@ -119,7 +119,7 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
 
         return render(request, 'calendars/weekly.html', context)
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
+class TaskCreateView(LoginRequiredMixin, BSModalCreateView):
     model = Task
     form_class = TaskForm
     success_message = "A new task has been created!"

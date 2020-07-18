@@ -3,3 +3,4 @@ mysqlclient==1.4.6
 django-crispy-forms==1.9.2
 django-tempus-dominus==5.1.2.13
 django-bootstrap-modal-forms==2.0.0
+django-widget-tweaks==1.4.8
