@@ -2,8 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from bootstrap_modal_forms.generic import BSModalCreateView
-from .models import Task
-from calendars.forms import TaskForm
+from .models import Task, Event
+from calendars.forms import TaskForm, EventForm
 from .functions import (
     getPreviousDay,
     getPreviousMonth,
@@ -131,3 +131,14 @@ class TaskCreateView(LoginRequiredMixin, BSModalCreateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
+class EventCreateView(LoginRequiredMixin, BSModalCreateView):
+    model = Event
+    form_class = EventForm
+    success_message = "A new event has been created!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')

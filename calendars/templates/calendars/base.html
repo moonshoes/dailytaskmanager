@@ -34,7 +34,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownCreateButton">
                             <button type="button" class="dropdown-item" id="create-task">Task</a>
-                            <button class="dropdown-item" data-toggle="modal" data-target="#baseModal" href="#">Event</a>
+                            <button type="button" class="dropdown-item" id="create-event">Event</a>
                             <button class="dropdown-item" data-toggle="modal" data-target="#baseModal" href="#">Habit</a>
                         </div>
                     </div>
@@ -60,8 +60,6 @@
                 </div>
             </div>
         </nav>
-
-        {% comment %} {% include 'calendars/baseModal.html' %} {% endcomment %}
 
         <div class="container-fluid h-75">
             {% if messages %}
@@ -115,6 +113,11 @@
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"
+            });
+
+            $("#create-event").modalForm({
+                modalID: "#modal",
+                formURL: "{% url 'event-create' %}?next={{ request.path }}"
             });
 
         });
