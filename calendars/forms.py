@@ -9,28 +9,38 @@ class TaskForm(BSModalModelForm):
         fields = ('name', 'description', 'date')
         widgets = {
             'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
-            'date': DatePicker(attrs={
+            'date': DatePicker(
+                options={
+                    'format': 'DD/MM/YYYY'
+                },
+                attrs={
                 'append': 'fa fa-calendar',
                 'icon-toggle': True,
             }),
         }
 
 class EventForm(BSModalModelForm):
+    startDate = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'],
+        widget=DateTimePicker(
+                options={
+                    'format': 'DD/MM/YYYY HH:mm'
+                },
+                attrs={
+                    'append': 'fa fa-calendar',
+                    'icon-toggle': True,
+            }))
+    endDate = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'],
+        widget=DateTimePicker(
+                options={
+                    'format': 'DD/MM/YYYY HH:mm'
+                },
+                attrs={
+                    'append': 'fa fa-calendar',
+                    'icon-toggle': True,
+            }))
     class Meta:
         model = Event
         fields = ('name', 'description', 'location', 'startDate', 'endDate')
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
-            'startDate': DateTimePicker(
-                options={
-                    'extraFormats': True
-                },
-                attrs={
-                'append': 'fa fa-calendar',
-                'icon-toggle': True,
-            }),
-            'endDate': DateTimePicker(attrs={
-                'append': 'fa fa-calendar',
-                'icon-toggle': True,
-            })
+            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2})
         }
