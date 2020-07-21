@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class CalendarEntry(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=150)
+    description = models.CharField(max_length=150, null=True, blank=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -20,6 +20,6 @@ class Task(CalendarEntry):
         return self.name
 
 class Event(CalendarEntry):
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, null=True, blank=True)
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     endDate = models.DateTimeField(auto_now=False, auto_now_add=False)
