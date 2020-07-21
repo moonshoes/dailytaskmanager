@@ -73,10 +73,15 @@
                 {% block content %} {% endblock %}
                 <div class="col-sm mr-3">
                     <div class="row h-100 row-cols-1">
-                        <div class="col bg-main mb-2 px-3 pt-3 pb-1 d-flex flex-column">
+                        <div class="col bg-main mb-2 px-3 pt-3 pb-1 d-flex flex-column overflow-auto">
                             <div>
                                 <h5 class="text-center">Today's tasks</h5>
                                 <hr>
+                                <ul>
+                                    {% for task in dailyTasks %}
+                                        <li>{{ task }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             <div class="mt-auto text-center">
                                 <hr class="m-0">

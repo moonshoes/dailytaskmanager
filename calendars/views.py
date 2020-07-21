@@ -41,12 +41,19 @@ def monthly(request, yearArg=-1, monthArg=-1):
         prevMonth = getPreviousMonth(year, month)
         nextMonth = getNextMonth(year, month)
 
+        dailyTasks = Task.objects.filter(
+                creator=request.user, 
+                completed=False,
+                date=today,
+            )
+
         context = {
             'prevMonth': prevMonth,
             'month': calendar.month_name[month],
             'nextMonth': nextMonth,
             'year': year,
             'monthList': cal.itermonthdates(year, month),
+            'dailyTasks': dailyTasks
         }
 
         return render(request, 'calendars/monthly.html', context)
