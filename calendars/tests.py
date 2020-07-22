@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .functions import (
+from functions.calendarFunctions import (
     getPreviousMonth,
     getNextMonth,
     getPreviousDay,

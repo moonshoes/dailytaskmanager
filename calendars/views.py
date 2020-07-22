@@ -1,10 +1,14 @@
+import calendar, datetime
+
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+
 from bootstrap_modal_forms.generic import BSModalCreateView
-from .models import Task, Event
+
+from calendars.models import Task, Event
 from calendars.forms import TaskForm, EventForm
-from .functions import (
+from calendars.functions.calendarFunctions import (
     getPreviousDay,
     getPreviousMonth,
     getPreviousWeek,
@@ -14,8 +18,9 @@ from .functions import (
     getCurrentWeek,
     getYearList
 )
-from .exceptions import InvalidMonthNumber, InvalidYearNumber
-import calendar, datetime
+from calendars.functions.modelFunctions import getDailyTasks
+from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
+
 
 def home(request):
     return redirect('calendars-month')
@@ -47,6 +52,7 @@ def monthly(request, yearArg=-1, monthArg=-1):
             'nextMonth': nextMonth,
             'year': year,
             'monthList': cal.itermonthdates(year, month),
+            'dailyTasks': getDailyTasks(today, request.user)
         }
 
         return render(request, 'calendars/monthly.html', context)
@@ -70,7 +76,8 @@ def yearly(request, yearArg=-1):
             'prevYear': year - 1,
             'year': year,
             'nextYear': year + 1,
-            'yearList': yearList
+            'yearList': yearList,
+            'dailyTasks': getDailyTasks(today, request.user)
         }
 
         return render(request, 'calendars/yearly.html', context)
@@ -91,7 +98,8 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
         context = {
             'prevDay': prevDay,
             'nextDay': nextDay,
-            'today': today
+            'today': today,
+            'dailyTasks': getDailyTasks(today, request.user)
         }
 
         return render(request, 'calendars/daily.html', context)
@@ -115,6 +123,7 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevWeek': prevWeek,
             'currentWeek': currentWeek,
             'nextWeek': nextWeek,
+            'dailyTasks': getDailyTasks(today, request.user)
         }
 
         return render(request, 'calendars/weekly.html', context)

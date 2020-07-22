@@ -15,3 +15,8 @@
 .h-200 {
     height:200% !important;
 }
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
