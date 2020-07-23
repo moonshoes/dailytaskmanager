@@ -1,0 +1,11 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+    {{ task.name }}
+{% endblock %}
+
+{% block modalBody %}
+    <p>Name: {{ task.name }}</p>
+    <p>Description: {{ task.description }}</p>
+    <p>Date: {{ task.date }} </p>
+{% endblock %}

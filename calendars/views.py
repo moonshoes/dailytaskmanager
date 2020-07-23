@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView
 
-from bootstrap_modal_forms.generic import BSModalCreateView
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalReadView
 
 from calendars.models import Task, Event
 from calendars.forms import TaskForm, EventForm
@@ -171,3 +171,6 @@ class UnfinishedTasksListView(ListView):
 
         context['dailyTasks'] = getDailyTasks(today, user)
         return context
+
+class TaskDetailView(BSModalReadView):
+    model = Task

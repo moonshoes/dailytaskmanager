@@ -18,9 +18,9 @@
                     <td>{{ task.description }} </td>
                     <td>{{ task.date }}</td>
                     <td>
-                        <a class="btn btn-outline-primary" href="#" role="button">
+                        <button type="button" class="btn btn-outline-primary btn-sm modal-trigger" data-form-url="{% url 'task-detail' task.pk %}">
                             Detail
-                        </a>
+                        </button>
                     </td>
                 </tr>
             {% endfor %}

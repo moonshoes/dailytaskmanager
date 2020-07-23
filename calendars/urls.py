@@ -2,7 +2,8 @@ from django.urls import path, include
 from .views import (
     TaskCreateView, 
     EventCreateView, 
-    UnfinishedTasksListView
+    UnfinishedTasksListView,
+    TaskDetailView
 )
 from . import views
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path('task/new/', TaskCreateView.as_view(), name='task-create'),
     path('event/new/', EventCreateView.as_view(), name='event-create'),
     path('tasks/', UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
+    path('task/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
 ]
