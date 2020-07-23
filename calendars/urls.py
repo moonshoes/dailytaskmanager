@@ -1,5 +1,9 @@
 from django.urls import path, include
-from .views import TaskCreateView, EventCreateView
+from .views import (
+    TaskCreateView, 
+    EventCreateView, 
+    UnfinishedTasksListView
+)
 from . import views
 
 urlpatterns = [
@@ -14,4 +18,5 @@ urlpatterns = [
     path('day/<int:yearArg>/<int:monthArg>/<int:dayArg>/', views.daily, name='calendars-day'),
     path('task/new/', TaskCreateView.as_view(), name='task-create'),
     path('event/new/', EventCreateView.as_view(), name='event-create'),
+    path('tasks/', UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
 ]

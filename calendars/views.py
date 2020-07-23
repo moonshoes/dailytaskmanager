@@ -1,8 +1,10 @@
 import calendar, datetime
 
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib import messages
+from django.views.generic import ListView
 
 from bootstrap_modal_forms.generic import BSModalCreateView
 
@@ -151,3 +153,21 @@ class EventCreateView(LoginRequiredMixin, BSModalCreateView):
     
     def get_success_url(self):
         return self.request.GET.get('next', '/')
+
+class UnfinishedTasksListView(ListView):
+    model = Task
+    template_name = 'calendars/unfinished_tasks.html'
+    context_object_name = 'tasks'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Task.objects.filter(creator=user, completed=False).order_by('date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        today = datetime.date.today()
+        user = self.request.user
+
+        context['dailyTasks'] = getDailyTasks(today, user)
+        return context
