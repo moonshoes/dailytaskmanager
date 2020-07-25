@@ -5,6 +5,7 @@ from .views import (
     UnfinishedTasksListView,
     TaskDetailView,
     FutureEventsListView,
+    EventDetailView,
 )
 from . import views
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('tasks/', UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
     path('events/', FutureEventsListView.as_view(), name='future-events'),
     path('task/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
+    path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
 ]
