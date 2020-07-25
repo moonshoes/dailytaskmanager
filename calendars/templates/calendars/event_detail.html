@@ -1,0 +1,24 @@
+{% extends 'calendars/baseModal.html' %}
+{% load calendars_filters %}
+
+{% block modalTitle %}
+    {{ event.name }} {% if now|currentlyHappening:event.startDate %}- Currently happening!{% endif %}
+{% endblock %}
+
+{% block modalBody %}
+    <div>
+        <span class="font-weight-bolder">Name:</span> {{ event.name }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Description:</span> {{ event.description }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Location:</span> {{ event.location }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Start date:</span> {{ event.startDate }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">End date:</span> {{ event.endDate }}
+    </div>
+{% endblock %}

@@ -197,3 +197,14 @@ class FutureEventsListView(ListView):
         context['dailyTasks'] = getDailyTasks(today, user)
         context['now'] = now
         return context
+
+class EventDetailView(BSModalReadView):
+    model = Event
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        now = timezone.now
+        
+        context['now'] = now
+        return context
