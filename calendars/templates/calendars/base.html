@@ -39,6 +39,7 @@
                         </div>
                     </div>
                     <a class="nav-item nav-link" href="#">Habits</a>
+                    <a class="nav-item nav-link" href="{% url 'future-events' %}">Events</a>
                 </div>
                 <div class="navbar-nav mr-auto">
                     {% block calendarNavigation %} {% endblock %}
@@ -120,7 +121,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
     
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(function() {
+            $(".modal-trigger").each(function () {
+                $(this).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"
@@ -129,12 +136,6 @@
             $("#create-event").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'event-create' %}?next={{ request.path }}"
-            });
-
-            $(".modal-trigger").each(function () {
-                $(this).modalForm({
-                    formUrl: $(this).data('form-url')
-                });
             });
         });
     </script>   

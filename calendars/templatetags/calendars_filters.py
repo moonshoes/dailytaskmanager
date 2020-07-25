@@ -1,5 +1,5 @@
 from django import template
-import operator
+import datetime, operator, pytz
 
 register = template.Library()
 
@@ -20,3 +20,7 @@ def hour(value):
         suffix = 'PM'
 
     return '{:d} {}'.format(remainder, suffix)
+
+@register.filter()
+def currentlyHappening(value, arg):
+    return value > arg

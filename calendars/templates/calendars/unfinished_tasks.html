@@ -18,7 +18,7 @@
                     <td>{{ task.description }} </td>
                     <td>{{ task.date }}</td>
                     <td>
-                        <button type="button" class="btn btn-outline-primary btn-sm modal-trigger" data-form-url="{% url 'task-detail' task.pk %}">
+                        <button type="button" id="task-detail" class="modal-trigger btn btn-outline-primary btn-sm" data-form-url="{% url 'task-detail' task.pk %}">
                             Detail
                         </button>
                     </td>

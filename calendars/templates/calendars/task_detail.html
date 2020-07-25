@@ -5,7 +5,13 @@
 {% endblock %}
 
 {% block modalBody %}
-    <p>Name: {{ task.name }}</p>
-    <p>Description: {{ task.description }}</p>
-    <p>Date: {{ task.date }} </p>
+    <div>
+        <span class="font-weight-bolder">Name:</span> {{ task.name }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Description:</span> {{ task.description }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Date:</span> {{ task.date }}
+    </div>
 {% endblock %}
