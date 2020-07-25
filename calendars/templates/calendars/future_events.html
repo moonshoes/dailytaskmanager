@@ -1,0 +1,37 @@
+{% extends 'calendars/base.html' %}
+{% load calendars_filters %}
+
+{% block content %}
+<div class="col-9 h-100 bg-main mx-3 overflow-auto">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Location</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr {% if now|currentlyHappening:event.startDate %}class="table-info"{% endif %}>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.description }} </td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.startDate }}</td>
+                    <td>{{ event.endDate }}</td>
+                    <td>
+                        <button type="button" id="event-detail" class="modal-trigger btn btn-outline-primary btn-sm">
+                            {% comment %} data-form-url="{% url 'event-detail' event.pk %}" {% endcomment %}
+                            
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

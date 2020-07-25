@@ -1,12 +1,13 @@
 import calendar, datetime
 
 from django.shortcuts import redirect, render, get_object_or_404
+from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView
 
-from bootstrap_modal_forms.generic import BSModalCreateView
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalReadView
 
 from calendars.models import Task, Event
 from calendars.forms import TaskForm, EventForm
@@ -170,4 +171,29 @@ class UnfinishedTasksListView(ListView):
         user = self.request.user
 
         context['dailyTasks'] = getDailyTasks(today, user)
+        return context
+
+class TaskDetailView(BSModalReadView):
+    model = Task
+
+class FutureEventsListView(ListView):
+    model = Event
+    template_name = 'calendars/future_events.html'
+    context_object_name = 'events'
+
+    def get_queryset(self):
+        user = self.request.user
+        now = timezone.now()
+        
+        return Event.objects.filter(creator=user, endDate__gte=now).order_by('startDate')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        today = datetime.date.today()
+        now = timezone.now
+        user = self.request.user
+
+        context['dailyTasks'] = getDailyTasks(today, user)
+        context['now'] = now
         return context

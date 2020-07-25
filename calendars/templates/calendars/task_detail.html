@@ -1,0 +1,17 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+    {{ task.name }}
+{% endblock %}
+
+{% block modalBody %}
+    <div>
+        <span class="font-weight-bolder">Name:</span> {{ task.name }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Description:</span> {{ task.description }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Date:</span> {{ task.date }}
+    </div>
+{% endblock %}
