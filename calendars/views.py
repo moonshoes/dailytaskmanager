@@ -7,7 +7,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView
 
-from bootstrap_modal_forms.generic import BSModalCreateView, BSModalReadView
+from bootstrap_modal_forms.generic import (
+    BSModalCreateView, 
+    BSModalReadView,
+    BSModalUpdateView
+)
 
 from calendars.models import Task, Event
 from calendars.forms import TaskForm, EventForm
@@ -208,3 +212,15 @@ class EventDetailView(BSModalReadView):
         
         context['now'] = now
         return context
+
+class TaskUpdateView(BSModalUpdateView):
+    model = Task
+    form_class = TaskForm
+    success_message = "A task has been updated!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
