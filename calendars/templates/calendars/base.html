@@ -128,6 +128,14 @@
                     formURL: $(this).data('form-url')
                 });
             });
+
+            $(document).on("click", "#task-update", function() {
+                $("#task-update").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"
