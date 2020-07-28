@@ -121,7 +121,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
     
     <script type="text/javascript">
-        $(function() {
+        $(document).ready(function() {
             $(".modal-trigger").each(function () {
                 $(this).modalForm({
                     modalID: "#modal",
@@ -129,8 +129,8 @@
                 });
             });
 
-            $(document).on("click", "#task-update", function() {
-                $("#task-update").modalForm({
+            $(document).on("click", "#update-task", function() {
+                $("#update-task").modalForm({
                     modalID: "#modal",
                     formURL: $(this).data('form-url')
                 });
@@ -145,6 +145,19 @@
                 modalID: "#modal",
                 formURL: "{% url 'event-create' %}?next={{ request.path }}"
             });
+
+            {% comment %} $(document).on("submit", "#task-form", function() {
+                var pre = "#task-detail-";
+                var taskId = $("input").first();
+                var task = pre.concat(taskId);
+
+                alert(task);
+
+                $(task).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            }); {% endcomment %}
         });
     </script>   
 

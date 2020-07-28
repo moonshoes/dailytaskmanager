@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block footerButton %}
-    <button type="button" id="task-update" class="btn btn-success" data-form-url="{% url 'task-update' task.pk %}">
+    <button type="button" id="update-task" class="btn btn-success" data-form-url="{% url 'task-update' task.pk %}?next={{ request.path }}">
         Update
     </button>
 {% endblock %}
