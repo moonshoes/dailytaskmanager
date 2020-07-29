@@ -145,19 +145,6 @@
                 modalID: "#modal",
                 formURL: "{% url 'event-create' %}?next={{ request.path }}"
             });
-
-            {% comment %} $(document).on("submit", "#task-form", function() {
-                var pre = "#task-detail-";
-                var taskId = $("input").first();
-                var task = pre.concat(taskId);
-
-                alert(task);
-
-                $(task).modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            }); {% endcomment %}
         });
     </script>   
 
