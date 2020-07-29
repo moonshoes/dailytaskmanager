@@ -1,9 +1,9 @@
 {% extends 'calendars/baseModalForm.html' %}
 
 {% block modalTitle %}
-    Create Event
+    {% if event %}Update{% else %}Create{% endif %} Event
 {% endblock %}
 
 {% block submitButtonText %}
-    Create event
+    {% if event %}Update{% else %}Create{% endif %}  event
 {% endblock %}

@@ -22,3 +22,9 @@
         <span class="font-weight-bolder">End date:</span> {{ event.endDate }}
     </div>
 {% endblock %}
+
+{% block footerButton %}
+    <button type="button" id="update-event" class="btn btn-success" data-form-url="{% url 'event-update' event.pk %}?next={{ next }}">
+        Update
+    </button>
+{% endblock %}
