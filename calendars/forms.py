@@ -5,19 +5,20 @@ from bootstrap_modal_forms.forms import BSModalModelForm
 from tempus_dominus.widgets import DatePicker, DateTimePicker
 
 class TaskForm(BSModalModelForm):
-    class Meta:
-        model = Task
-        fields = ('name', 'description', 'date')
-        widgets = {
-            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
-            'date': DatePicker(
+    date = forms.DateField(input_formats=['%d/%m/%Y'],
+        widget=DatePicker(
                 options={
                     'format': 'DD/MM/YYYY'
                 },
                 attrs={
                 'append': 'fa fa-calendar',
                 'icon-toggle': True,
-            }),
+            }))
+    class Meta:
+        model = Task
+        fields = ('name', 'description', 'date')
+        widgets = {
+            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2})
         }
 
 class EventForm(BSModalModelForm):

@@ -15,3 +15,9 @@
         <span class="font-weight-bolder">Date:</span> {{ task.date }}
     </div>
 {% endblock %}
+
+{% block footerButton %}
+    <button type="button" id="update-task" class="btn btn-success" data-form-url="{% url 'task-update' task.pk %}?next={{ next }}">
+        Update
+    </button>
+{% endblock %}

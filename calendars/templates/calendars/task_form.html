@@ -1,9 +1,17 @@
 {% extends 'calendars/baseModalForm.html' %}
 
+{% block formId %}
+    {% if task %}id="task-form"{% endif %}
+{% endblock %}
+
 {% block modalTitle %}
-    Create Task
+    {% if task %}Update{% else %}Create{% endif %} Task
+{% endblock %}
+
+{% block hiddenInput %}
+    <input type="hidden" id="pk" name="pk" value="{{ task.pk }}">
 {% endblock %}
 
 {% block submitButtonText %}
-    Create task
+    {% if task %}Update{% else %}Create{% endif %} task
 {% endblock %}

@@ -3,11 +3,13 @@
 {% load widget_tweaks %}
 
 {% block formBeginning %}
-    <form method="post" action="">
+    <form {% block formId %} {% endblock %} method="post" action="">
         {% csrf_token %}
 {% endblock %}
 
 {% block modalBody %}
+    {% block hiddeninput %} {% endblock %}
+
     {% for field in form %}
         <div class="form-group {% if field.errors %} invalid {% endif %}">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -19,7 +21,7 @@
     {% endfor %}
 {% endblock %}
 
-{% block submitButton %}
+{% block footerButton %}
     <button type="button" class="submit-btn btn btn-primary">
         {% block submitButtonText%} {% endblock %}
     </button>
