@@ -136,6 +136,13 @@
                 });
             });
 
+            $(document).on("click", "#update-event", function() {
+                $("#update-event").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"

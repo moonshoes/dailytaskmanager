@@ -23,7 +23,7 @@
                     <td>{{ event.startDate }}</td>
                     <td>{{ event.endDate }}</td>
                     <td>
-                        <button type="button" id="event-detail" class="modal-trigger btn btn-outline-primary btn-sm" data-form-url="{% url 'event-detail' event.pk %}">
+                        <button type="button" id="event-detail" class="modal-trigger btn btn-outline-primary btn-sm" data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                             Detail
                         </button>
                     </td>

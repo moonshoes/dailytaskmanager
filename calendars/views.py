@@ -218,14 +218,28 @@ class EventDetailView(BSModalReadView):
         context = super().get_context_data(**kwargs)
         
         now = timezone.now
-        
+        next = self.request.GET.get('next', '/')
+
         context['now'] = now
+        context['next'] = next
         return context
 
 class TaskUpdateView(BSModalUpdateView):
     model = Task
     form_class = TaskForm
-    success_message = "A task has been updated!"
+    success_message = "The task has been updated!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class EventUpdateView(BSModalUpdateView):
+    model = Event
+    form_class = EventForm
+    success_message = "The event has been updated!"
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
