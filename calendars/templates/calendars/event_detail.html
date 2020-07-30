@@ -27,4 +27,7 @@
     <button type="button" id="update-event" class="btn btn-success" data-form-url="{% url 'event-update' event.pk %}?next={{ next }}">
         Update
     </button>
+    <button type="button" id="delete-event" class="btn btn-danger" data-form-url="{% url 'event-delete' event.pk %}?next={{ next }}">
+        Delete
+    </button>
 {% endblock %}

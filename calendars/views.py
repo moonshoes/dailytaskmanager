@@ -241,6 +241,7 @@ class EventUpdateView(BSModalUpdateView):
     model = Event
     form_class = EventForm
     success_message = "The event has been updated!"
+    template_name = 'calendars/confirm_delete.html'
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -252,6 +253,15 @@ class EventUpdateView(BSModalUpdateView):
 class TaskDeleteView(BSModalDeleteView):
     model = Task
     success_message = "The task has been deleted!"
+    template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class EventDeleteView(BSModalDeleteView):
+    model = Event
+    success_message = "The event has been deleted!"
+    template_name = 'calendars/confirm_delete.html'
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')
