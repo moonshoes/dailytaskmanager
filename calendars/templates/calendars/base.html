@@ -136,6 +136,13 @@
                 });
             });
 
+            $(document).on("click", "#delete-task", function() {
+                $("#delete-task").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $(document).on("click", "#update-event", function() {
                 $("#update-event").modalForm({
                     modalID: "#modal",

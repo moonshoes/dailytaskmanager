@@ -10,7 +10,8 @@ from django.views.generic import ListView
 from bootstrap_modal_forms.generic import (
     BSModalCreateView, 
     BSModalReadView,
-    BSModalUpdateView
+    BSModalUpdateView,
+    BSModalDeleteView
 )
 
 from calendars.models import Task, Event
@@ -245,5 +246,12 @@ class EventUpdateView(BSModalUpdateView):
         form.instance.creator = self.request.user
         return super().form_valid(form)
     
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class TaskDeleteView(BSModalDeleteView):
+    model = Task
+    success_message = "The task has been deleted!"
+
     def get_success_url(self):
         return self.request.GET.get('next', '/')
