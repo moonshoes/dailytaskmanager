@@ -150,6 +150,13 @@
                 });
             });
 
+            $(document).on("click", "#delete-event", function() {
+                $("#delete-event").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"
