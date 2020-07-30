@@ -20,4 +20,7 @@
     <button type="button" id="update-task" class="btn btn-success" data-form-url="{% url 'task-update' task.pk %}?next={{ next }}">
         Update
     </button>
+    <button type="button" id="delete-task" class="btn btn-danger" data-form-url="{% url 'task-delete' task.pk %}?next={{ next }}">
+        Delete
+    </button>
 {% endblock %}

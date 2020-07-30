@@ -1,0 +1,24 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block formBeginning %}
+    <form method="post" action="">
+        {% csrf_token %}
+{% endblock %}
+
+{% block modalTitle %}
+    Confirm deletion
+{% endblock %}
+
+{% block modalBody %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+{% endblock %}
+
+{% block footerButton %}
+    <button type="submit" class="btn btn-danger">
+        Delete
+    </button>
+{% endblock %}
+
+{% block formEnd %}
+    </form>
+{% endblock %}
