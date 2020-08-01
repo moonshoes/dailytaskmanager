@@ -1,0 +1,35 @@
+{% extends 'calendars/base.html' %}
+{% load calendars_filters %}
+
+{% block content %}
+<div class="col-9 h-100 bg-main mx-3 overflow-auto">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Frequency</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for habit in habits %}
+                <tr>
+                    <td><div style="background-color: {{ habit.iconColor }}" class="habitIcon"><div></td>
+                    <td>{{ habit.name }} </td>
+                    <td>{{ habit.description }}</td>
+                    <td>
+                        {{ "habit.monday,habit.tuesday,habit.wednesday,
+                            habit.thursday,habit.friday,
+                            habit.saturday,habit.sunday"|habitFrequency }}
+                    </td>
+                    <td>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

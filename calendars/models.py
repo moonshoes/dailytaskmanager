@@ -26,3 +26,18 @@ class Event(CalendarEntry):
 
     def __str__(self):
         return self.name
+
+class Habit(CalendarEntry):
+    creationDate = models.DateField(auto_now_add=True)
+    monday = models.BooleanField(default=True)
+    tuesday = models.BooleanField(default=True)
+    wednesday = models.BooleanField(default=True)
+    thursday = models.BooleanField(default=True)
+    friday = models.BooleanField(default=True)
+    saturday = models.BooleanField(default=True)
+    sunday = models.BooleanField(default=True)
+
+    iconColor = models.CharField(max_length=7)
+
+    def __str__(self):
+        return self.name
