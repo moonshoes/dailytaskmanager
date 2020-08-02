@@ -1,0 +1,20 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+   <div style="background-color: {{ habit.iconColor }}" class="habitIcon"></div> {{ habit.name }}
+{% endblock %}
+
+{% block modalBody %}
+    <div>
+        <span class="font-weight-bolder">Name:</span> {{ habit.name }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Description:</span> {{ habit.description }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
+    </div>
+{% endblock %}
+
+{% block footerButton %}
+{% endblock %}
