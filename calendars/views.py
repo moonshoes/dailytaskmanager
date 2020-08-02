@@ -294,3 +294,11 @@ class HabitDetailView(BSModalReadView):
 
         context['next'] = next
         return context
+
+class HabitDeleteView(BSModalDeleteView):
+    model = Habit
+    success_message = "The habit has been deleted!"
+    template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
