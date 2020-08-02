@@ -26,7 +26,7 @@ from calendars.functions.calendarFunctions import (
     getCurrentWeek,
     getYearList
 )
-from calendars.functions.modelFunctions import getDailyTasks
+from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits
 from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
 
 
@@ -60,7 +60,8 @@ def monthly(request, yearArg=-1, monthArg=-1):
             'nextMonth': nextMonth,
             'year': year,
             'monthList': cal.itermonthdates(year, month),
-            'dailyTasks': getDailyTasks(today, request.user)
+            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
         }
 
         return render(request, 'calendars/monthly.html', context)
@@ -85,7 +86,8 @@ def yearly(request, yearArg=-1):
             'year': year,
             'nextYear': year + 1,
             'yearList': yearList,
-            'dailyTasks': getDailyTasks(today, request.user)
+            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
         }
 
         return render(request, 'calendars/yearly.html', context)
@@ -107,7 +109,8 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevDay': prevDay,
             'nextDay': nextDay,
             'today': today,
-            'dailyTasks': getDailyTasks(today, request.user)
+            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
         }
 
         return render(request, 'calendars/daily.html', context)
@@ -131,7 +134,8 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevWeek': prevWeek,
             'currentWeek': currentWeek,
             'nextWeek': nextWeek,
-            'dailyTasks': getDailyTasks(today, request.user)
+            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
         }
 
         return render(request, 'calendars/weekly.html', context)
@@ -176,6 +180,7 @@ class UnfinishedTasksListView(ListView):
         user = self.request.user
 
         context['dailyTasks'] = getDailyTasks(today, user)
+        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
         return context
 
 class TaskDetailView(BSModalReadView):
@@ -209,6 +214,7 @@ class FutureEventsListView(ListView):
         user = self.request.user
 
         context['dailyTasks'] = getDailyTasks(today, user)
+        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
         context['now'] = now
         return context
 
@@ -282,6 +288,7 @@ class HabitListView(ListView):
         user = self.request.user
 
         context['dailyTasks'] = getDailyTasks(today, user)
+        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
         return context
 
 class HabitDetailView(BSModalReadView):
