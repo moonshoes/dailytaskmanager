@@ -14,7 +14,7 @@ from bootstrap_modal_forms.generic import (
     BSModalDeleteView
 )
 
-from calendars.models import Task, Event
+from calendars.models import Task, Event, Habit
 from calendars.forms import TaskForm, EventForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
@@ -265,3 +265,21 @@ class EventDeleteView(BSModalDeleteView):
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')
+
+#Habits
+class HabitListView(ListView):
+    model = Habit
+    context_object_name = 'habits'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Habit.objects.filter(creator=user).order_by('creationDate')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        today = datetime.date.today()
+        user = self.request.user
+
+        context['dailyTasks'] = getDailyTasks(today, user)
+        return context

@@ -9,7 +9,8 @@ from .views import (
     TaskUpdateView,
     EventUpdateView,
     TaskDeleteView,
-    EventDeleteView
+    EventDeleteView,
+    HabitListView
 )
 from . import views
 
@@ -33,4 +34,7 @@ urlpatterns = [
     path('event/<int:pk>/update', EventUpdateView.as_view(), name='event-update'),
     path('task/<int:pk>/delete', TaskDeleteView.as_view(), name='task-delete'),
     path('event/<int:pk>/delete', EventDeleteView.as_view(), name='event-delete'),
+
+    #Habit URLs
+    path('habits/', HabitListView.as_view(), name='list-habits'),
 ]
