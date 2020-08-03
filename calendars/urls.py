@@ -12,7 +12,8 @@ from .views import (
     EventDeleteView,
     HabitListView,
     HabitDetailView,
-    HabitDeleteView
+    HabitDeleteView,
+    HabitCreateView
 )
 from . import views
 
@@ -41,4 +42,5 @@ urlpatterns = [
     path('habits/', HabitListView.as_view(), name='list-habits'),
     path('habit/<int:pk>/', HabitDetailView.as_view(), name='habit-detail'),
     path('habit/<int:pk>/delete', HabitDeleteView.as_view(), name='habit-delete'),
+    path('habit/new/', HabitCreateView.as_view(), name='habit-create'),
 ]

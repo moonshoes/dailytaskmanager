@@ -15,7 +15,7 @@ from bootstrap_modal_forms.generic import (
 )
 
 from calendars.models import Task, Event, Habit
-from calendars.forms import TaskForm, EventForm
+from calendars.forms import TaskForm, EventForm, HabitForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
     getPreviousMonth,
@@ -306,6 +306,18 @@ class HabitDeleteView(BSModalDeleteView):
     model = Habit
     success_message = "The habit has been deleted!"
     template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class HabitCreateView(LoginRequiredMixin, BSModalCreateView):
+    model = Habit
+    form_class = HabitForm
+    success_message = "A new habit has been created!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')

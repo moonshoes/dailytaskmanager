@@ -35,7 +35,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownCreateButton">
                             <button type="button" class="dropdown-item" id="create-task">Task</a>
                             <button type="button" class="dropdown-item" id="create-event">Event</a>
-                            <button class="dropdown-item" data-toggle="modal" data-target="#baseModal" href="#">Habit</a>
+                            <button type="button" class="dropdown-item" id="create-habit">Habit</a>
                         </div>
                     </div>
                     <a class="nav-item nav-link" href="{% url 'list-habits' %}">Habits</a>
@@ -185,6 +185,19 @@
                 modalID: "#modal",
                 formURL: "{% url 'event-create' %}?next={{ request.path }}"
             });
+
+            $("#create-habit").modalForm({
+                modalID: "#modal",
+                formURL: "{% url 'habit-create' %}?next={{ request.path }}"
+            });
+
+            $(".icon-radio").hover(
+                function() {
+                    $(this).css("background-color","red");
+                }, function() {
+                    $(this).css("background-color", "");
+                }
+            );
         });
     </script>   
 
