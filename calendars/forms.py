@@ -55,11 +55,32 @@ class EventForm(BSModalModelForm):
         endDate = self.cleaned_data.get("endDate")
 
         if startDate is not None and endDate is not None and startDate > endDate:
-            msg = "Start date cannot begin after end date"
+            msg = "Start date cannot begin after end date."
             self.add_error('startDate', msg)
             self.add_error('endDate', msg)
 
 class HabitForm(BSModalModelForm):
+    frequencyChoice = forms.CharField(label="Frequency",
+        widget=forms.RadioSelect(
+            choices=[
+                ('daily', 'Daily'),
+                ('personalised', 'Personalised')
+            ])
+    )
+    personalisedFrequency = forms.ChoiceField(
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=[
+            ('monday', 'M'),
+            ('tuesday', 'Tu'),
+            ('wednesday', 'W'),
+            ('thursday', 'Th'),
+            ('friday', 'F'),
+            ('saturday', 'Sa'),
+            ('sunday', 'Su')
+        ]
+    )
+
     class Meta:
         model = Habit
         fields = ('name', 'description', 'iconColor')
@@ -70,8 +91,20 @@ class HabitForm(BSModalModelForm):
             'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
             'iconColor': forms.RadioSelect(
                 choices=[
-                    ('#ff0000', '#ff0000'), #red
-                    ('#00cc00', '#00cc00'), #green
-                    ('#0066ff', '#0066ff'), #blue
-                    ('#ffff00', '#ffff00')]) #yellow
+                    ('#ff0000', 'red'), #red
+                    ('#00cc00', 'green'), #green
+                    ('#0066ff', 'blue'), #blue
+                    ('#ffff00', 'yellow')]) #yellow
         }
+    
+    def clean(self):
+        super().clean()
+        frequencyChoice = self.cleaned_data.get("frequencyChoice")
+        personalisedFrequency = self.cleaned_data.get("personalisedFrequency")
+
+        if frequencyChoice == "personalised":
+            if not personalisedFrequency:
+                msg = "At least one day should be selected."
+                self.add_error('personalisedFrequency', msg)
+            else:
+                print(personalisedFrequency)

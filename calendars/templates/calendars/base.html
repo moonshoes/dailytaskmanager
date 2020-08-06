@@ -191,13 +191,14 @@
                 formURL: "{% url 'habit-create' %}?next={{ request.path }}"
             });
 
-            $(".icon-radio").hover(
-                function() {
-                    $(this).css("background-color","red");
-                }, function() {
-                    $(this).css("background-color", "");
+            var $frequency = $("input[type=radio][name=frequencyChoice]");
+            $(document).on("click", $frequency, function() {
+                if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $(".personalised").css('visibility', 'visible');
+                } else {
+                    $(".personalised").css('visibility', 'hidden');
                 }
-            );
+            });
         });
     </script>   
 
