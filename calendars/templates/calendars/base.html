@@ -133,6 +133,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
     
     <script type="text/javascript">
+        {% comment %} $("#personalised").ready(function() {
+            if($(this).hasClass(".invalid")) {
+                    $(this).css('visibility', 'visible');
+            }
+            alert('ready');
+        }); {% endcomment %}
+        
         $(document).ready(function() {
             $(".modal-trigger").each(function () {
                 $(this).modalForm({
@@ -192,11 +199,13 @@
             });
 
             var $frequency = $("input[type=radio][name=frequencyChoice]");
+
+
             $(document).on("click", $frequency, function() {
                 if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
-                    $(".personalised").css('visibility', 'visible');
+                    $("#personalised").css('visibility', 'visible');
                 } else {
-                    $(".personalised").css('visibility', 'hidden');
+                    $("#personalised").css('visibility', 'hidden');
                 }
             });
         });

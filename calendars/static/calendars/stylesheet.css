@@ -32,7 +32,7 @@ ul {
     display: block;
 }
 
-.personalised {
+#personalised {
     visibility: hidden;
 }
 
@@ -48,4 +48,12 @@ ul {
     height: 20px;
     width: 20px;
     border-radius: 50%;
+}
+
+.icon-radio:hover span ~ label {
+    background-color: black;
+}
+
+.icon-radio input:checked .icon-radio > label {
+    background-color: aqua;
 } */

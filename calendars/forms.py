@@ -67,18 +67,18 @@ class HabitForm(BSModalModelForm):
                 ('personalised', 'Personalised')
             ])
     )
-    personalisedFrequency = forms.ChoiceField(
+    personalisedFrequency = forms.CharField(
         required=False,
-        widget=forms.CheckboxSelectMultiple,
-        choices=[
-            ('monday', 'M'),
-            ('tuesday', 'Tu'),
-            ('wednesday', 'W'),
-            ('thursday', 'Th'),
-            ('friday', 'F'),
-            ('saturday', 'Sa'),
-            ('sunday', 'Su')
-        ]
+        widget=forms.CheckboxSelectMultiple(
+            choices=[
+                ('monday', 'M'),
+                ('tuesday', 'Tu'),
+                ('wednesday', 'W'),
+                ('thursday', 'Th'),
+                ('friday', 'F'),
+                ('saturday', 'Sa'),
+                ('sunday', 'Su')
+        ])
     )
 
     class Meta:

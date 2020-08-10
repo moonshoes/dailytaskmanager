@@ -317,6 +317,32 @@ class HabitCreateView(LoginRequiredMixin, BSModalCreateView):
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
+
+        if self.request.POST.get("frequencyChoice") == "daily":
+            form.instance.monday = True
+            form.instance.tuesday = True
+            form.instance.wednesday = True
+            form.instance.thursday = True
+            form.instance.friday = True
+            form.instance.saturday = True
+            form.instance.sunday = True
+        else:
+            for day in self.request.POST.getlist("personalisedFrequency"):
+                if day == 'monday':
+                    form.instance.monday = True
+                elif day == 'tuesday':
+                    form.instance.tuesday = True
+                elif day == 'wednesday':
+                    form.instance.wednesday = True
+                elif day == 'thursday':
+                    form.instance.thursday = True
+                elif day == 'friday':
+                    form.instance.friday = True
+                elif day == 'saturday':
+                    form.instance.saturday = True
+                elif day == 'sunday':
+                    form.instance.sunday = True
+
         return super().form_valid(form)
 
     def get_success_url(self):
