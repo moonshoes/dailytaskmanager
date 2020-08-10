@@ -176,6 +176,13 @@
                 });
             });
 
+            $(document).on("click", "#update-habit", function() {
+                $("#update-habit").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $(document).on("click", "#delete-habit", function() {
                 $("#delete-habit").modalForm({
                     modalID: "#modal",

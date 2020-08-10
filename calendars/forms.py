@@ -96,6 +96,35 @@ class HabitForm(BSModalModelForm):
                     ('#0066ff', 'blue'), #blue
                     ('#ffff00', 'yellow')]) #yellow
         }
+
+    def __init__(self, *args, **kwargs):
+        super(HabitForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            habit = Habit.objects.get(pk=self.instance.pk)
+            frequency = habit.frequency()
+            print(frequency)
+            if frequency == "Every day":
+                self.fields['frequencyChoice'].initial = 'daily'
+            else:
+                initialChoices = []
+
+                if habit.monday:
+                    initialChoices.append('monday')
+                if habit.tuesday:
+                    initialChoices.append('tuesday')
+                if habit.wednesday:
+                    initialChoices.append('wednesday')
+                if habit.thursday:
+                    initialChoices.append('thursday')
+                if habit.friday:
+                    initialChoices.append('friday')
+                if habit.saturday:
+                    initialChoices.append('saturday')
+                if habit.sunday:
+                    initialChoices.append('sunday')
+
+                self.fields['frequencyChoice'].initial = 'personalised'
+                self.fields['personalisedFrequency'].initial = initialChoices
     
     def clean(self):
         super().clean()
