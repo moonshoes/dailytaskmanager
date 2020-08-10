@@ -35,7 +35,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownCreateButton">
                             <button type="button" class="dropdown-item" id="create-task">Task</a>
                             <button type="button" class="dropdown-item" id="create-event">Event</a>
-                            <button class="dropdown-item" data-toggle="modal" data-target="#baseModal" href="#">Habit</a>
+                            <button type="button" class="dropdown-item" id="create-habit">Habit</a>
                         </div>
                     </div>
                     <a class="nav-item nav-link" href="{% url 'list-habits' %}">Habits</a>
@@ -133,6 +133,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
     
     <script type="text/javascript">
+        {% comment %} $("#personalised").ready(function() {
+            if($(this).hasClass(".invalid")) {
+                    $(this).css('visibility', 'visible');
+            }
+            alert('ready');
+        }); {% endcomment %}
+        
         $(document).ready(function() {
             $(".modal-trigger").each(function () {
                 $(this).modalForm({
@@ -184,6 +191,22 @@
             $("#create-event").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'event-create' %}?next={{ request.path }}"
+            });
+
+            $("#create-habit").modalForm({
+                modalID: "#modal",
+                formURL: "{% url 'habit-create' %}?next={{ request.path }}"
+            });
+
+            var $frequency = $("input[type=radio][name=frequencyChoice]");
+
+
+            $(document).on("click", $frequency, function() {
+                if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $("#personalised").css('visibility', 'visible');
+                } else {
+                    $("#personalised").css('visibility', 'hidden');
+                }
             });
         });
     </script>   

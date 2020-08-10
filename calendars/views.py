@@ -15,7 +15,7 @@ from bootstrap_modal_forms.generic import (
 )
 
 from calendars.models import Task, Event, Habit
-from calendars.forms import TaskForm, EventForm
+from calendars.forms import TaskForm, EventForm, HabitForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
     getPreviousMonth,
@@ -306,6 +306,44 @@ class HabitDeleteView(BSModalDeleteView):
     model = Habit
     success_message = "The habit has been deleted!"
     template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class HabitCreateView(LoginRequiredMixin, BSModalCreateView):
+    model = Habit
+    form_class = HabitForm
+    success_message = "A new habit has been created!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+
+        if self.request.POST.get("frequencyChoice") == "daily":
+            form.instance.monday = True
+            form.instance.tuesday = True
+            form.instance.wednesday = True
+            form.instance.thursday = True
+            form.instance.friday = True
+            form.instance.saturday = True
+            form.instance.sunday = True
+        else:
+            for day in self.request.POST.getlist("personalisedFrequency"):
+                if day == 'monday':
+                    form.instance.monday = True
+                elif day == 'tuesday':
+                    form.instance.tuesday = True
+                elif day == 'wednesday':
+                    form.instance.wednesday = True
+                elif day == 'thursday':
+                    form.instance.thursday = True
+                elif day == 'friday':
+                    form.instance.friday = True
+                elif day == 'saturday':
+                    form.instance.saturday = True
+                elif day == 'sunday':
+                    form.instance.sunday = True
+
+        return super().form_valid(form)
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')

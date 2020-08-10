@@ -1,0 +1,84 @@
+{% extends 'calendars/baseModal.html' %}
+{% load widget_tweaks %}
+
+{% block formBeginning %}
+    <form method="post" action="">
+        {% csrf_token %}
+{% endblock %}
+
+{% block modalTitle %}
+    {% if habit %}Update{% else %}Create{% endif %} Habit
+{% endblock %}
+
+{% block modalBody %}
+    {% for field in form %}
+        {% if field == form.iconColor %}
+            <div class="form-group {% if field.errors %} invalid {% endif %}">
+                <label class="radio-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% for radio in field %}
+                    <div class="form-check-inline icon-radio">
+                        <span style="form-check-input">{{ radio.tag }}</span>
+                        <label 
+                            {% comment %} style="border: 2px solid {{ radio.choice_label }}" {% endcomment %}
+                            {% comment %} onmouseover="this.style.backgroundColor='{{ radio.choice_label }}'"
+                            onmouseout="this.style.backgroundColor=''" {% endcomment %}
+                            class="form-check-label" 
+                            for="{{ radio.id_for_label }}">
+                            {{ radio.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+                {% for error in field.errors %}
+                    <p class="help-block text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% elif field == form.frequencyChoice %}
+            <div class="form-group {% if field.errors %} invalid {% endif %}">
+                <label class="radio-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% for radio in field %}
+                    <div class="form-check-inline">
+                        <span style="form-check-input">{{ radio.tag }}</span>
+                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                             {{ radio.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+                {% for error in field.errors %}
+                    <p class="help-block text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% elif field == form.personalisedFrequency %}
+            <div id="personalised" class="form-group {% if field.errors %} invalid {% endif %}">
+                {% for radio in field %}
+                    <div class="form-check-inline">
+                        <span style="form-check-input">{{ radio.tag }}</span>
+                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                            {{ radio.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+                {% for error in field.errors %}
+                    <p class="help-block text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="form-group {% if field.errors %} invalid {% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% render_field field class="form-control" %}
+                {% for error in field.errors %}
+                    <p class="help-block text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block footerButton %}
+    <button type="button" class="submit-btn btn btn-primary">
+        {% if habit %}Update{% else %}Create{% endif %}  habit
+    </button>
+{% endblock %}
+
+{% block formEnd %}
+    </form>
+{% endblock %} 
