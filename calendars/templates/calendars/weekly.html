@@ -23,7 +23,7 @@ active
 
 {% block content %}
 <div class="col-9 bg-main mx-3 overflow-auto">
-    <div class="row sticky-top">
+    <div class="row sticky-top bg-main">
         {% for day in currentWeek.weekDaysList %}
             <div class="col text-center small">
                 {{ day|date:"D j" }}

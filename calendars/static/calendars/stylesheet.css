@@ -57,3 +57,11 @@ ul {
 .icon-radio input:checked .icon-radio > label {
     background-color: aqua;
 } */
+
+.task-bar {
+    padding: 5px;
+}
+
+.task-wrapper {
+    margin-right: 5px;
+}

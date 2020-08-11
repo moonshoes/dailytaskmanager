@@ -22,7 +22,16 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="col-9 bg-main mx-3">
+<div class="col-9 bg-main mx-3 overflow-auto">
+    <div class="row sticky-top task-bar bg-main">
+        {% for task in dailyTasks %}
+            <button 
+                class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+            </a>
+        {% endfor %}
+    </div>
     <div class="row h-100 row-cols-1">
         {% for x in 0|range:24 %}
             <div class="col border">
