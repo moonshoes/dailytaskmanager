@@ -14,10 +14,19 @@ def getWeeklyTasks(week, user):
             creator=user,
             date=day
         ))
+    return taskList
+
+def getMonthlyTasks(month, user):
+    taskList = []
+    for day in month:
+        taskList.append(Task.objects.filter(
+            creator=user,
+            date=day
+        ))
     print(taskList)
     return taskList
 
-
+#Habits
 def getDailyHabits(weekDay, user):
     #throw error if weekday not >1 or <8
     habitsUser = Habit.objects.filter(creator=user)

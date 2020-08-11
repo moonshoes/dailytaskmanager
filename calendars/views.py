@@ -26,7 +26,7 @@ from calendars.functions.calendarFunctions import (
     getCurrentWeek,
     getYearList
 )
-from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits, getWeeklyTasks
+from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits, getWeeklyTasks, getMonthlyTasks
 from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
 
 
@@ -51,17 +51,17 @@ def monthly(request, yearArg=-1, monthArg=-1):
         year = today.year
         month = today.month
     finally:
-        prevMonth = getPreviousMonth(year, month)
-        nextMonth = getNextMonth(year, month)
+        monthList = cal.itermonthdates(year, month)
 
         context = {
-            'prevMonth': prevMonth,
+            'prevMonth': getPreviousMonth(year, month),
             'month': calendar.month_name[month],
-            'nextMonth': nextMonth,
+            'nextMonth': getNextMonth(year, month),
             'year': year,
             'monthList': cal.itermonthdates(year, month),
             'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
+            'monthlyHabits': getMonthlyTasks(monthList, request.user)
         }
 
         return render(request, 'calendars/monthly.html', context)

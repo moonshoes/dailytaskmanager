@@ -23,7 +23,7 @@ active
 {% block content %}
 <div class="col-9 bg-main mx-3">
     <div class="row h-100 row-cols-7">
-        {% for day in monthList %}
+        {% for (day, tasks) in zip(monthList, monthlyTasks) %}
             <div class="col border">
                 <h6 class="text-center">
                     {% if forloop.counter <= 7 %}
@@ -31,6 +31,13 @@ active
                     {% else %}
                         {{ day|date:"j" }}
                     {% endif %}
+                    {% for task in tasks %}
+                        <button 
+                            class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                            data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                            {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                        </button>
+                    {% endfor %}
                 </h6>
             </div>
         {% endfor %}
