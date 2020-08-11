@@ -17,6 +17,9 @@
 {% endblock %}
 
 {% block footerButton %}
+    <button type="button" id="update-habit" class="btn btn-success" data-form-url="{% url 'habit-update' habit.pk %}?next={{ next }}">
+        Update
+    </button>
     <button type="button" id="delete-habit" class="btn btn-danger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
         Delete
     </button>

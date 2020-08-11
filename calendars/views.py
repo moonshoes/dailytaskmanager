@@ -247,7 +247,6 @@ class EventUpdateView(BSModalUpdateView):
     model = Event
     form_class = EventForm
     success_message = "The event has been updated!"
-    template_name = 'calendars/confirm_delete.html'
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -345,5 +344,52 @@ class HabitCreateView(LoginRequiredMixin, BSModalCreateView):
 
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class HabitUpdateView(BSModalUpdateView):
+    model = Habit
+    form_class = HabitForm
+    success_message = "The habit has been updated!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+
+        if self.request.POST.get("frequencyChoice") == "daily":
+            form.instance.monday = True
+            form.instance.tuesday = True
+            form.instance.wednesday = True
+            form.instance.thursday = True
+            form.instance.friday = True
+            form.instance.saturday = True
+            form.instance.sunday = True
+        else:
+            #Set all days to false in case of an update from every day -> personalised days
+            #Or in the case of unticking a day and selecting others instead!
+            form.instance.monday = False
+            form.instance.tuesday = False
+            form.instance.wednesday = False
+            form.instance.thursday = False
+            form.instance.friday = False
+            form.instance.saturday = False
+            form.instance.sunday = False
+            for day in self.request.POST.getlist("personalisedFrequency"):
+                if day == 'monday':
+                    form.instance.monday = True
+                elif day == 'tuesday':
+                    form.instance.tuesday = True
+                elif day == 'wednesday':
+                    form.instance.wednesday = True
+                elif day == 'thursday':
+                    form.instance.thursday = True
+                elif day == 'friday':
+                    form.instance.friday = True
+                elif day == 'saturday':
+                    form.instance.saturday = True
+                elif day == 'sunday':
+                    form.instance.sunday = True
+
+        return super().form_valid(form)
+    
     def get_success_url(self):
         return self.request.GET.get('next', '/')
