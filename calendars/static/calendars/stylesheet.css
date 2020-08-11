@@ -16,6 +16,10 @@
     height:200% !important;
 }
 
+.dropdown-menu {
+    z-index: 1021;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
@@ -64,4 +68,5 @@ ul {
 
 .task-wrapper {
     margin-right: 5px;
+    margin-bottom: 5px;
 }

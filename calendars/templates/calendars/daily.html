@@ -29,7 +29,7 @@ active
                 class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
                 data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
                 {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-            </a>
+            </button>
         {% endfor %}
     </div>
     <div class="row h-100 row-cols-1">

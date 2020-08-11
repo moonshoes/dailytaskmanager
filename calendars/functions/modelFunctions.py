@@ -1,10 +1,22 @@
 from calendars.models import Task, Habit
 
+#Tasks
 def getDailyTasks(day, user):
     return Task.objects.filter(
                 creator=user,
                 date=day,
             )
+
+def getWeeklyTasks(week, user):
+    taskList = []
+    for day in week.get('weekDaysList'):
+        taskList.append(Task.objects.filter(
+            creator=user,
+            date=day
+        ))
+    print(taskList)
+    return taskList
+
 
 def getDailyHabits(weekDay, user):
     #throw error if weekday not >1 or <8

@@ -26,7 +26,7 @@ from calendars.functions.calendarFunctions import (
     getCurrentWeek,
     getYearList
 )
-from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits
+from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits, getWeeklyTasks
 from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
 
 
@@ -135,7 +135,8 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'currentWeek': currentWeek,
             'nextWeek': nextWeek,
             'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
+            'weeklyTasks': getWeeklyTasks(currentWeek, request.user)
         }
 
         return render(request, 'calendars/weekly.html', context)
