@@ -23,4 +23,4 @@ def hour(value):
 
 @register.filter()
 def currentlyHappening(value, arg):
-    return value > arg
+    return value >= arg

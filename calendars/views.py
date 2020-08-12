@@ -26,9 +26,13 @@ from calendars.functions.calendarFunctions import (
     getCurrentWeek,
     getYearList
 )
-from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits, getWeeklyTasks, getMonthlyEntries
-from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
-
+from calendars.functions.modelFunctions import (
+    getDailyTasks, 
+    getDailyHabits, 
+    getWeeklyTasks, 
+    getMonthlyEntries,
+    getDailyEvents
+)
 
 def home(request):
     return redirect('calendars-month')
@@ -110,7 +114,8 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'nextDay': nextDay,
             'today': today,
             'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
+            'dailyEvents': getDailyEvents(today, request.user)
         }
 
         return render(request, 'calendars/daily.html', context)

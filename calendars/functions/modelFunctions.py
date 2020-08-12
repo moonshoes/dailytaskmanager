@@ -1,4 +1,4 @@
-from calendars.models import Task, Habit
+from calendars.models import Task, Habit, Event
 
 #Tasks
 def getDailyTasks(day, user):
@@ -15,6 +15,16 @@ def getWeeklyTasks(week, user):
             date=day
         ))
     return taskList
+
+#Events
+def getDailyEvents(day, user):
+    events = Event.objects.filter(
+        startDate__date__lte=day,
+        endDate__date__gte=day,
+        creator=user
+    )
+    print(events)
+    return events
 
 def getMonthlyEntries(month, user):
     dayEntryList = []
