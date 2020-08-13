@@ -38,7 +38,6 @@ def getMonthlyEntries(month, user):
                     )
             }
         )
-    print(dayEntryList)
     return dayEntryList
 
 #Habits

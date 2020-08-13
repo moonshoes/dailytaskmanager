@@ -23,25 +23,27 @@ active
 
 {% block content %}
 <div class="col-9 bg-main mx-3 overflow-auto">
-    <div class="row sticky-top bg-main">
-        {% for day in currentWeek.weekDaysList %}
-            <div class="col text-center small border border-bottom-0">
-                {{ day|date:"D j" }}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="row sticky-top bg-main">
-        {% for tasks in weeklyTasks %}
-            <div class="col border border-top-0">
-                {% for task in tasks %}
-                    <button 
-                        class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                        data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
-                        {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-                    </button>
-                {% endfor %}
-            </div>
-        {% endfor %}
+    <div class="sticky-top">
+        <div class="row bg-main">
+            {% for day in currentWeek.weekDaysList %}
+                <div class="col text-center small border border-bottom-0">
+                    {{ day|date:"D j" }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row bg-main">
+            {% for tasks in weeklyTasks %}
+                <div class="col border border-top-0">
+                    {% for task in tasks %}
+                        <button 
+                            class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                            data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                            {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
     <div class="row h-100 row-cols-7">
         {% for day in currentWeek.weekDaysList %}
