@@ -40,8 +40,8 @@ def home(request):
 def monthly(request, yearArg=-1, monthArg=-1):
     try:
         cal = calendar.Calendar(0) #0 is the default!
+        today = datetime.date.today()
         if yearArg == -1 and monthArg == -1:
-            today = datetime.date.today()
             year = today.year
             month = today.month
         elif monthArg < 1 or monthArg > 12:

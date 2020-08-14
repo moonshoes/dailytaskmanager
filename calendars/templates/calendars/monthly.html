@@ -21,8 +21,28 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="col-9 bg-main mx-3">
-    <div class="row h-100 row-cols-7">
+<div class="col-9 bg-main ml-3 px-0 h-100">
+    <div class="month-grid h-100">
+        {% for day in monthList %}
+            <div class="month-item border p-1">
+                <h6 class="text-center">
+                    {% if forloop.counter <= 7 %}
+                        {{ day.day|date:"D, j" }}
+                    {% else %}
+                        {{ day.day|date:"j" }}
+                    {% endif %}
+                </h6>
+                {% for task in day.taskList %}
+                    <button 
+                        class="task-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                        data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                        {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                    </button>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    {% comment %} <div class="row h-100 row-cols-7">
         {% for day in monthList %}
             <div class="col border overflow-auto">
                 <h6 class="text-center">
@@ -41,6 +61,6 @@ active
                 {% endfor %}
             </div>
         {% endfor %}
-    </div>
+    </div> {% endcomment %}
 </div>
 {% endblock content %}

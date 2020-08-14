@@ -22,8 +22,8 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="col-9 bg-main mx-3 overflow-auto">
-    <div class="sticky-top">
+<div class="col-9 bg-main px-0 ml-3 h-100 overflow-auto">
+    <div class="sticky-top px-3">
         <div class="row bg-main task-bar">
             <div class="col text-center small">
                 {{ today }}
@@ -39,19 +39,17 @@ active
             {% endfor %}
         </div>
     </div>
-    <div class="row h-200 row-cols-1">
+    <div class="day-grid h-200">
         {% for x in 0|range:24 %}
-            <div class="col border">
+            <div class="day-item border d-flex align-items-end flex-column">
                 {{ x|hour }}
-                {% for event in dailyEvents %}
-                {% comment %} {% if event| %} {% endcomment %}
+                {% comment %} {% for event in dailyEvents %}
                 <button 
                     class="task-wrapper btn btn-secondary btn-sm modal-trigger" 
                     data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                     {{ event }}
                 </button>
-                {% endif %}
-                {% endfor %}
+                {% endfor %} {% endcomment %}
             </div>
         {% endfor %}
     </div>
