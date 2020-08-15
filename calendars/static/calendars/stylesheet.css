@@ -13,7 +13,11 @@
 }
 
 .h-200 {
-    height:200% !important;
+    height: 200% !important;
+}
+
+.h-300 {
+    height: 300% !important;
 }
 
 .dropdown-menu {
@@ -123,8 +127,8 @@ ul {
 
 .day-item {
     min-height: 0;
-    max-height: 0;
-    padding-left: .5rem;
+    min-width: 0;
+    padding-left: .2rem;
 }
 
 .week-grid {

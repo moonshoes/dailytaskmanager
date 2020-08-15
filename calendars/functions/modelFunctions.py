@@ -32,10 +32,8 @@ def getMonthlyEntries(month, user):
         dayEntryList.append(
             {
                 'day': day,
-                'taskList': Task.objects.filter(
-                    creator=user,
-                    date=day
-                    )
+                'taskList': getDailyTasks(day, user),
+                'eventList': getDailyEvents(day, user)
             }
         )
     return dayEntryList

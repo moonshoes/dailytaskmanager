@@ -39,6 +39,15 @@ active
                         {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                     </button>
                 {% endfor %}
+                {% for event in day.eventList %}
+                    {% if event.startDate|date:"d" == event.endDate|date:"d" %}
+                    <button 
+                        class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                        {{ event }} {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                    </button>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% endfor %}
     </div>

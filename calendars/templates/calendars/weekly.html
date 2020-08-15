@@ -45,12 +45,25 @@ active
             {% endfor %}
         </div>
     </div>
-    <div class="week-grid h-200">
+    <div class="week-grid h-300">
         {% for x in 0|range:24 %}
-            {% for y in 0|range:7 %}
+            {% for day in currentWeek.weekDaysList %}
                 <div class="day-item border d-flex align-items-end flex-column">
+                <div class="mr-auto">
+                    {% comment %} {% for tasks in weeklyTasks %}
+                        {% if forloop.counter == forloop.parentloop.counter %}
+                            {% for task in tasks %}
+                            <button 
+                                class="task-wrapper mt-1 btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                                data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                            </button>
+                        {% endfor %}
+                        {% endif %}
+                    {% endfor %} {% endcomment %}
+                </div>
                 {% if forloop.first %}
-                    <div class="mt-auto ml-n2 small">{{ x|hour }}</div>
+                    <div class="mt-auto mr-auto small">{{ x|hour }}</div>
                 {% endif %}
                 </div>
             {% endfor %}
