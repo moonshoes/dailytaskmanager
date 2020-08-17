@@ -1,4 +1,5 @@
 {% extends "calendars/base.html" %}
+{% load calendars_filters %}
 
 {% block calendarNavigation %}
 <div class="nav-item navbar-text mr-4">
@@ -32,6 +33,36 @@ active
                         {{ day.day|date:"j" }}
                     {% endif %}
                 </h6>
+                {% for event in day.eventList %}
+                    <button 
+                        class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                        {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                    </button>
+                    {% comment %} {% if event.startDate|multipleDayEvent:event.endDate %}
+                        {% if forloop.parentloop.counter|beginningOfMonth or forloop.parentloop.counter|beginningOfWeek %}
+                            <button 
+                                class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                            </button>
+                        {% elif event.startDate|startsToday:day.day %}
+                            <button 
+                                class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                                style="grid-column: {{ forloop.parentloop.counter|columnLine }} / span 2;"
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% if event.startDate|sameDayEvent:event.endDate %}
+                        <button 
+                            class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                            data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                            {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                        </button>
+                    {% endif %} {% endcomment %}
+                {% endfor %}
                 {% for task in day.taskList %}
                     <button 
                         class="task-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
@@ -39,17 +70,22 @@ active
                         {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                     </button>
                 {% endfor %}
-                {% for event in day.eventList %}
-                    {% if event.startDate|date:"d" == event.endDate|date:"d" %}
-                    <button 
-                        class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
-                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                        {{ event }} {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
-                    </button>
-                    {% endif %}
-                {% endfor %}
             </div>
         {% endfor %}
+        {% comment %} <div style="grid-column: 3;
+                grid-row: second-line;">
+        <button 
+            class="task-wrapper btn px-1 py-0 btn-danger btn-sm"
+            style="grid-column: 3 / span 2;"
+            data-form-url="#">
+            test1!
+        </button>
+        <button 
+            class="task-wrapper btn px-1 py-0 btn-danger btn-sm"
+            data-form-url="#">
+            test!
+        </button>
+        </div> {% endcomment %}
     </div>
     {% comment %} <div class="row h-100 row-cols-7">
         {% for day in monthList %}

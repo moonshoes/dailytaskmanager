@@ -12,6 +12,10 @@
     max-width:14.2857132%;
 }
 
+.h-90 {
+    height: 90% !important;
+}
+
 .h-200 {
     height: 200% !important;
 }
@@ -73,6 +77,9 @@ ul {
 .task-wrapper {
     margin-right: 5px;
     margin-bottom: 5px;
+    max-height: 23px;
+    overflow: hidden;
+    align-self: start;
 }
 
 .sidebar {

@@ -24,3 +24,30 @@ def hour(value):
 @register.filter()
 def currentlyHappening(value, arg):
     return value >= arg
+
+@register.filter()
+def sameDayEvent(start, end):
+    return start.day == end.day
+
+@register.filter()
+def multipleDayEvent(start, end):
+    return start.day != end.day
+
+@register.filter()
+def beginningOfMonth(value):
+    # print("bm")
+    return value == 1
+
+@register.filter()
+def beginningOfWeek(value):
+    # print("bw")
+    return operator.mod(value, 7) == 1
+
+@register.filter()
+def startsToday(start, day):
+    # print("st")
+    return start.date() == day
+
+@register.filter()
+def columnLine(value):
+    return operator.mod(value, 7)
