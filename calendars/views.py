@@ -113,7 +113,8 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevDay': prevDay,
             'nextDay': nextDay,
             'today': today,
-            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
+            'dayTasks': getDailyTasks(today, request.user),
             'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
             'dailyEvents': getDailyEvents(today, request.user)
         }
@@ -139,7 +140,7 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevWeek': prevWeek,
             'currentWeek': currentWeek,
             'nextWeek': nextWeek,
-            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
             'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
             'weeklyTasks': getWeeklyTasks(currentWeek, request.user)
         }

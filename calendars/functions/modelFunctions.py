@@ -1,4 +1,5 @@
 from calendars.models import Task, Habit, Event
+from django.db.models import Q
 
 #Tasks
 def getDailyTasks(day, user):
@@ -18,11 +19,18 @@ def getWeeklyTasks(week, user):
 
 #Events
 def getDailyEvents(day, user):
-    events = Event.objects.filter(
-        startDate__date__lte=day,
-        endDate__date__gte=day,
-        creator=user
-    )
+    events = {
+        'allDay': Event.objects.filter(
+            startDate__date__lt=day,
+            endDate__date__gt=day,
+            creator=user
+        ),
+        'misc': Event.objects.filter(
+            Q(startDate__date=day) |
+            Q(endDate__date=day),
+            Q(creator=user)
+        )
+    }
     print(events)
     return events
 
@@ -33,7 +41,11 @@ def getMonthlyEntries(month, user):
             {
                 'day': day,
                 'taskList': getDailyTasks(day, user),
-                'eventList': getDailyEvents(day, user)
+                'eventList': Event.objects.filter(
+                    startDate__date__lte=day,
+                    endDate__date__gte=day,
+                    creator=user
+                )
             }
         )
     return dayEntryList

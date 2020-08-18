@@ -44,10 +44,21 @@ def beginningOfWeek(value):
     return operator.mod(value, 7) == 1
 
 @register.filter()
-def startsToday(start, day):
+def isToday(start, day):
     # print("st")
     return start.date() == day
 
 @register.filter()
-def columnLine(value):
-    return operator.mod(value, 7)
+def compareStartDateHour(date, hour):
+    return hour >= date.time().hour
+
+@register.filter()
+def compareEndDateHour(date, hour):
+    return (hour <= date.time().hour and 
+        (hour != date.time().hour or 
+            (hour == date.time().hour and
+            date.time().minute > 0)))
+
+# @register.filter()
+# def columnLine(value):
+#     return operator.mod(value, 7)

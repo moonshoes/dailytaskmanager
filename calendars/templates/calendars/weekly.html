@@ -8,7 +8,7 @@
             <path fill-rule="evenodd" d="M10 12.796L4.519 8 10 3.204v9.592zm-.659.753l-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
         </svg>
     </a>
-    {{ currentWeek.firstWeekDay }} - {{ currentWeek.lastWeekDay }}
+    {{ currentWeek.firstWeekDay|date:"N j" }} - {{ currentWeek.lastWeekDay|date:"N j" }}
     <a href="{% url 'calendars-week' nextWeek.year nextWeek.month nextWeek.day %}" class="text-decoration-none">
         <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-caret-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M6 12.796L11.481 8 6 3.204v9.592zm.659.753l5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
@@ -26,14 +26,18 @@ active
     <div class="sticky-top px-3">
         <div class="row bg-main">
             {% for day in currentWeek.weekDaysList %}
-                <div class="col text-center small border border-bottom-0">
+                <div class="col text-center small border 
+                    border-bottom-0 {% if forloop.first %}border-left-0{% endif%}
+                    {% if forloop.last %}border-right-0{% endif %}">
                     {{ day|date:"D j" }}
                 </div>
             {% endfor %}
         </div>
         <div class="row bg-main">
             {% for tasks in weeklyTasks %}
-                <div class="col border border-top-0">
+                <div class="col border border-top-0
+                    {% if forloop.first %}border-left-0{% endif%}
+                    {% if forloop.last %}border-right-0{% endif %}">
                     {% for task in tasks %}
                         <button 
                             class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
@@ -48,7 +52,10 @@ active
     <div class="week-grid h-300">
         {% for x in 0|range:24 %}
             {% for day in currentWeek.weekDaysList %}
-                <div class="day-item border d-flex align-items-end flex-column">
+                <div class="day-item border 
+                    {% if forloop.first %}border-left-0{% endif%}
+                    {% if forloop.last %}border-right-0{% endif %}
+                    d-flex align-items-end flex-column">
                 <div class="mr-auto">
                     {% comment %} {% for tasks in weeklyTasks %}
                         {% if forloop.counter == forloop.parentloop.counter %}
