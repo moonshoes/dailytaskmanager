@@ -31,7 +31,8 @@ from calendars.functions.modelFunctions import (
     getDailyHabits, 
     getWeeklyTasks, 
     getMonthlyEntries,
-    getDailyEvents
+    getDailyEvents,
+    getWeeklyEntries
 )
 
 def home(request):
@@ -138,11 +139,10 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         
         context = {
             'prevWeek': prevWeek,
-            'currentWeek': currentWeek,
+            'currentWeek': getWeeklyEntries(currentWeek, request.user),
             'nextWeek': nextWeek,
             'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
             'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
-            'weeklyTasks': getWeeklyTasks(currentWeek, request.user)
         }
 
         return render(request, 'calendars/weekly.html', context)

@@ -11,10 +11,7 @@ def getDailyTasks(day, user):
 def getWeeklyTasks(week, user):
     taskList = []
     for day in week.get('weekDaysList'):
-        taskList.append(Task.objects.filter(
-            creator=user,
-            date=day
-        ))
+        taskList.append(getDailyTasks(day, user))
     return taskList
 
 #Events
@@ -34,6 +31,7 @@ def getDailyEvents(day, user):
     print(events)
     return events
 
+#Tasks and events
 def getMonthlyEntries(month, user):
     dayEntryList = []
     for day in month:
@@ -49,6 +47,20 @@ def getMonthlyEntries(month, user):
             }
         )
     return dayEntryList
+
+def getWeeklyEntries(week, user):
+    dayEntryList = []
+    for day in week.get('weekDaysList'):
+        dayEntryList.append(
+            {
+                'day': day,
+                'taskList': getDailyTasks(day, user),
+                'eventList': getDailyEvents(day, user)
+            }
+        )
+    week.update({'weekDaysList': dayEntryList})
+    print(week)
+    return week
 
 #Habits
 def getDailyHabits(weekDay, user):

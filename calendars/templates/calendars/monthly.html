@@ -26,13 +26,13 @@ active
     <div class="month-grid h-100">
         {% for day in monthList %}
             <div class="month-item border p-1">
-                <h6 class="text-center">
+                <div class="text-center">
                     {% if forloop.counter <= 7 %}
                         {{ day.day|date:"D, j" }}
                     {% else %}
                         {{ day.day|date:"j" }}
                     {% endif %}
-                </h6>
+                </div>
                 {% for event in day.eventList %}
                     <button 
                         class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 

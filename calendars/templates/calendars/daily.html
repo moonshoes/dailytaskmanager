@@ -48,8 +48,9 @@ active
     </div>
     <div class="day-grid h-300">
         {% for x in 0|range:24 %}
-            <div class="day-item border-top border-bottom d-flex align-items-end flex-column">
-                <div class="mr-auto p-1">
+            <div class="day-item border-top border-bottom">
+                <div class="small">{{ x|hour }}</div>
+                <div class="p-1">
                 {% for event in dailyEvents.misc %}
                     {% if event.startDate|isToday:today and event.endDate|isToday:today %}
                         {% if event.startDate|compareStartDateHour:x and event.endDate|compareEndDateHour:x %}
@@ -83,7 +84,6 @@ active
                             </button> {% endcomment %}
                 {% endfor %}
                 </div>
-                <div class="mt-auto mr-auto small">{{ x|hour }}</div>
             </div>
         {% endfor %}
     </div>
