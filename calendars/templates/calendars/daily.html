@@ -22,20 +22,68 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="col-9 bg-main mx-3 overflow-auto">
-    <div class="row sticky-top task-bar bg-main">
-        {% for task in dailyTasks %}
-            <button 
-                class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
-                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-            </button>
-        {% endfor %}
+<div class="col-9 bg-main px-0 ml-3 h-100 overflow-auto">
+    <div class="sticky-top px-3">
+        <div class="row bg-main task-bar">
+            <div class="col text-center small">
+                {{ today }}
+            </div>
+        </div>
+        <div class="row task-bar bg-main">
+            {% for event in dailyEvents.allDay %}
+                <button 
+                    class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                    data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                    {{ event }} - All day
+                </button>
+            {% endfor %}
+            {% for task in dayTasks %}
+                <button 
+                    class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                    {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                </button>
+            {% endfor %}
+        </div>
     </div>
-    <div class="row h-100 row-cols-1">
+    <div class="day-grid h-300">
         {% for x in 0|range:24 %}
-            <div class="col border">
-                {{ x|hour }}
+            <div class="day-item border-top border-bottom">
+                <div class="small">{{ x|hour }}</div>
+                <div class="p-1">
+                {% for event in dailyEvents.misc %}
+                    {% if event.startDate|isToday:today and event.endDate|isToday:today %}
+                        {% if event.startDate|compareStartDateHour:x and event.endDate|compareEndDateHour:x %}
+                            <button 
+                                class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                            </button>
+                        {% endif %}
+                    {% elif event.endDate|isToday:today %}
+                        {% if event.endDate|compareEndDateHour:x %}
+                            <button 
+                                class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"P" }}
+                            </button>
+                        {% endif %}
+                    {% elif event.startDate|isToday:today %}
+                        {% if event.startDate|compareStartDateHour:x %}
+                            <button 
+                                class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"j M, P" }}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% comment %} <button 
+                                class="task-wrapper btn btn-secondary btn-sm modal-trigger" 
+                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                {{ event }}
+                            </button> {% endcomment %}
+                {% endfor %}
+                </div>
             </div>
         {% endfor %}
     </div>

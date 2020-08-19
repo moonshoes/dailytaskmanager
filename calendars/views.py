@@ -26,9 +26,14 @@ from calendars.functions.calendarFunctions import (
     getCurrentWeek,
     getYearList
 )
-from calendars.functions.modelFunctions import getDailyTasks, getDailyHabits, getWeeklyTasks, getMonthlyEntries
-from calendars.exceptions import InvalidMonthNumber, InvalidYearNumber
-
+from calendars.functions.modelFunctions import (
+    getDailyTasks, 
+    getDailyHabits, 
+    getWeeklyTasks, 
+    getMonthlyEntries,
+    getDailyEvents,
+    getWeeklyEntries
+)
 
 def home(request):
     return redirect('calendars-month')
@@ -36,8 +41,8 @@ def home(request):
 def monthly(request, yearArg=-1, monthArg=-1):
     try:
         cal = calendar.Calendar(0) #0 is the default!
+        today = datetime.date.today()
         if yearArg == -1 and monthArg == -1:
-            today = datetime.date.today()
             year = today.year
             month = today.month
         elif monthArg < 1 or monthArg > 12:
@@ -109,8 +114,10 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
             'prevDay': prevDay,
             'nextDay': nextDay,
             'today': today,
-            'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
+            'dayTasks': getDailyTasks(today, request.user),
+            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
+            'dailyEvents': getDailyEvents(today, request.user)
         }
 
         return render(request, 'calendars/daily.html', context)
@@ -132,11 +139,10 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         
         context = {
             'prevWeek': prevWeek,
-            'currentWeek': currentWeek,
+            'currentWeek': getWeeklyEntries(currentWeek, request.user),
             'nextWeek': nextWeek,
-            'dailyTasks': getDailyTasks(today, request.user),
+            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
             'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
-            'weeklyTasks': getWeeklyTasks(currentWeek, request.user)
         }
 
         return render(request, 'calendars/weekly.html', context)

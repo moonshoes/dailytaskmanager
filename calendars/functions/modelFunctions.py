@@ -1,4 +1,5 @@
-from calendars.models import Task, Habit
+from calendars.models import Task, Habit, Event
+from django.db.models import Q
 
 #Tasks
 def getDailyTasks(day, user):
@@ -10,26 +11,56 @@ def getDailyTasks(day, user):
 def getWeeklyTasks(week, user):
     taskList = []
     for day in week.get('weekDaysList'):
-        taskList.append(Task.objects.filter(
-            creator=user,
-            date=day
-        ))
+        taskList.append(getDailyTasks(day, user))
     return taskList
 
+#Events
+def getDailyEvents(day, user):
+    events = {
+        'allDay': Event.objects.filter(
+            startDate__date__lt=day,
+            endDate__date__gt=day,
+            creator=user
+        ),
+        'misc': Event.objects.filter(
+            Q(startDate__date=day) |
+            Q(endDate__date=day),
+            Q(creator=user)
+        )
+    }
+    print(events)
+    return events
+
+#Tasks and events
 def getMonthlyEntries(month, user):
     dayEntryList = []
     for day in month:
         dayEntryList.append(
             {
                 'day': day,
-                'taskList': Task.objects.filter(
-                    creator=user,
-                    date=day
-                    )
+                'taskList': getDailyTasks(day, user),
+                'eventList': Event.objects.filter(
+                    startDate__date__lte=day,
+                    endDate__date__gte=day,
+                    creator=user
+                )
             }
         )
-    print(dayEntryList)
     return dayEntryList
+
+def getWeeklyEntries(week, user):
+    dayEntryList = []
+    for day in week.get('weekDaysList'):
+        dayEntryList.append(
+            {
+                'day': day,
+                'taskList': getDailyTasks(day, user),
+                'eventList': getDailyEvents(day, user)
+            }
+        )
+    week.update({'weekDaysList': dayEntryList})
+    print(week)
+    return week
 
 #Habits
 def getDailyHabits(weekDay, user):

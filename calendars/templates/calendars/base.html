@@ -28,8 +28,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav mr-auto">
-                    <div class="dropdown nav-item">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownCreateButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="dropdown nav-item form-inline">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownCreateButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Create
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownCreateButton">
@@ -43,8 +43,8 @@
                 </div>
                 <div class="navbar-nav mr-auto">
                     {% block calendarNavigation %} {% endblock %}
-                    <div class="dropdown nav-item">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="dropdown nav-item form-inline">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Calendar view
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -62,7 +62,7 @@
             </div>
         </nav>
 
-        <div class="container-fluid h-75">
+        <div class="container-fluid h-90">
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }}">
@@ -72,52 +72,50 @@
             {% endif %}
             <div class="row mt-3 h-100">
                 {% block content %} {% endblock %}
-                <div class="col-sm mr-3">
-                    <div class="row h-100 row-cols-1">
-                        <div class="col bg-main mh-100 mb-2 px-3 pt-3 pb-1 d-flex flex-column">
-                            <div>
+                <div class="col-sm mr-1 sidebar h-100">
+                    <div class="sidebar-item bg-main d-flex flex-column">
+                        <div>
+                            <div class="bg-main border-bottom sidebar-top sticky-top">
                                 <h5 class="text-center">Today's tasks</h5>
-                                <hr>
-                                <ul>
-                                    {% for task in dailyTasks %}
-                                        <li>
-                                            <div class="form-check">                
-                                                <input class="form-check-input" type="checkbox" value="" id="{{ task.id }}"
-                                                    {% if task.completed %} checked {% endif %}>
-                                                <label class="form-check-label" for="{{ task.id }}">
-                                                    {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-                                                </label>
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
                             </div>
-                            <div class="mt-auto text-center">
-                                <hr class="m-0">
-                                <a href="{% url 'unfinished-tasks' %}" class="text-decoration-none text-muted mb-0">All tasks</a>
-                            </div>
+                            <ul>
+                                {% for task in dailyTasks %}
+                                    <li>
+                                        <div class="form-check">                
+                                            <input class="form-check-input" type="checkbox" value="" id="{{ task.id }}"
+                                                {% if task.completed %} checked {% endif %}>
+                                            <label class="form-check-label" for="{{ task.id }}">
+                                                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                        <div class="col bg-main mh-100 mt-2 px-3 pt-3 pb-1 d-flex flex-column">
-                            <div>
+                        <div class="mt-auto text-center bg-main sidebar-link border-top">
+                            <a href="{% url 'unfinished-tasks' %}" class="text-decoration-none text-muted mb-0">All tasks</a>
+                        </div>
+                    </div>
+                    <div class="sidebar-item bg-main d-flex flex-column">
+                        <div>
+                            <div class="bg-main border-bottom sidebar-top sticky-top">
                                 <h5 class="text-center">Today's habits</h5>
-                                <hr>
-                                <ul>
-                                    {% for habit in dailyHabits %}
-                                        <li>
-                                            <div class="form-check">                
-                                                <input class="form-check-input" type="checkbox" value="" id="{{ habit.id }}">
-                                                <label class="form-check-label" for="{{ habit.id }}">
-                                                    {{ habit }}
-                                                </label>
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
                             </div>
-                            <div class="mt-auto text-center">
-                                <hr class="m-0">
-                                <a href="{% url 'list-habits' %}" class="text-decoration-none text-muted mb-0">All habits</a>
-                            </div>
+                            <ul>
+                                {% for habit in dailyHabits %}
+                                    <li>
+                                        <div class="form-check">                
+                                            <input class="form-check-input" type="checkbox" value="" id="{{ habit.id }}">
+                                            <label class="form-check-label" for="{{ habit.id }}">
+                                                {{ habit }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="mt-auto text-center bg-main sidebar-link border-top">
+                            <a href="{% url 'list-habits' %}" class="text-decoration-none text-muted mb-0">All habits</a>
                         </div>
                     </div>
                 </div>
@@ -133,13 +131,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
     
     <script type="text/javascript">
-        {% comment %} $("#personalised").ready(function() {
-            if($(this).hasClass(".invalid")) {
-                    $(this).css('visibility', 'visible');
-            }
-            alert('ready');
-        }); {% endcomment %}
-        
         $(document).ready(function() {
             $(".modal-trigger").each(function () {
                 $(this).modalForm({

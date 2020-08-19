@@ -8,7 +8,7 @@
             <path fill-rule="evenodd" d="M10 12.796L4.519 8 10 3.204v9.592zm-.659.753l-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
         </svg>
     </a>
-    {{ currentWeek.firstWeekDay }} - {{ currentWeek.lastWeekDay }}
+    {{ currentWeek.firstWeekDay|date:"N j" }} - {{ currentWeek.lastWeekDay|date:"N j" }}
     <a href="{% url 'calendars-week' nextWeek.year nextWeek.month nextWeek.day %}" class="text-decoration-none">
         <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-caret-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M6 12.796L11.481 8 6 3.204v9.592zm.659.753l5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
@@ -22,40 +22,80 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="col-9 bg-main mx-3 overflow-auto">
-    <div class="row sticky-top bg-main">
-        {% for day in currentWeek.weekDaysList %}
-            <div class="col text-center small border border-bottom-0">
-                {{ day|date:"D j" }}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="row sticky-top bg-main">
-        {% for tasks in weeklyTasks %}
-            <div class="col border border-top-0">
-                {% for task in tasks %}
-                    <button 
-                        class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                        data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
-                        {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-                    </button>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="row h-100 row-cols-7">
-        {% for day in currentWeek.weekDaysList %}
-            <div class="col">
-                <div class="row h-200 row-cols-1">
-                    {% for x in 0|range:24 %}
-                        <div class="col border d-flex aligm-items-end flex-column">
-                            {% if forloop.parentloop.first %}
-                                <div class="mt-auto ml-n2 small">{{ x|hour }}</div>
-                            {% endif %}
-                        </div>
+<div class="col-9 bg-main ml-3 px-0 h-100 overflow-auto">
+    <div class="sticky-top px-3">
+        <div class="row bg-main">
+            {% for day in currentWeek.weekDaysList %}
+                <div class="col text-center small 
+                    {% if not forloop.first %}border-left{% endif%}
+                    {% if not forloop.last %}border-right{% endif %}">
+                    {{ day.day|date:"D j" }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row bg-main">
+            {% for day in currentWeek.weekDaysList %}
+                <div class="col border border-top-0
+                    {% if forloop.first %}border-left-0{% endif%}
+                    {% if forloop.last %}border-right-0{% endif %}">
+                    {% for event in day.eventList.allDay %}
+                        <button 
+                            class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                            data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                            {{ event }}
+                        </button>
+                    {% endfor %}
+                    {% for task in day.taskList %}
+                        <button 
+                            class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                            data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                            {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                        </button>
                     {% endfor %}
                 </div>
-            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="week-grid h-300">
+        {% for x in 0|range:24 %}
+            {% for day in currentWeek.weekDaysList %}
+                <div class="day-item border overflow-hidden
+                    {% if forloop.first %}border-left-0{% endif%}
+                    {% if forloop.last %}border-right-0{% endif %}">
+                    {% if forloop.first %}
+                        <div class="small">{{ x|hour }}</div>
+                    {% endif %}
+                    <div class="p-1">
+                        {% for event in day.eventList.misc %}
+                            {% if event.startDate|isToday:day.day and event.endDate|isToday:day.day %}
+                                {% if event.startDate|compareStartDateHour:x and event.endDate|compareEndDateHour:x %}
+                                    <button 
+                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                        {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                                    </button>
+                                {% endif %}
+                            {% elif event.endDate|isToday:day.day %}
+                                {% if event.endDate|compareEndDateHour:x %}
+                                    <button 
+                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                        {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"P" }}
+                                    </button>
+                                {% endif %}
+                            {% elif event.startDate|isToday:day.day %}
+                                {% if event.startDate|compareStartDateHour:x %}
+                                    <button 
+                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
+                                        {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"j M, P" }}
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
         {% endfor %}
     </div>
 </div>
