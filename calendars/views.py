@@ -24,7 +24,8 @@ from calendars.functions.calendarFunctions import (
     getNextMonth,
     getNextWeek,
     getCurrentWeek,
-    getYearList
+    getYearList,
+    getNextHour
 )
 from calendars.functions.modelFunctions import (
     getDailyTasks, 
@@ -400,3 +401,47 @@ class HabitUpdateView(BSModalUpdateView):
     
     def get_success_url(self):
         return self.request.GET.get('next', '/')
+
+def DayDetailView(request, yearArg, monthArg, dayArg):
+    try:
+        today = datetime.date(yearArg, monthArg, dayArg)
+    except ValueError as error:
+        messages.warning(request, "{}/{}/{} isn't a valid date!".format(yearArg, monthArg, dayArg))
+        today = datetime.date.today()
+    finally:
+        next = request.GET.get('next', '/')
+
+        context = {
+            'next': next,
+            'today': today,
+            'tasks': getDailyTasks(today, request.user),
+            'events': Event.objects.filter(
+                    startDate__date__lte=today,
+                    endDate__date__gte=today,
+                    creator=request.user
+                )
+        }
+
+        return render(request, 'calendars/day.html', context)
+
+def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
+    try:
+        hour = datetime.datetime(yearArg, monthArg, dayArg, hourArg)
+    except ValueError as error:
+        messages.warning(request, "{}/{}/{} {}:00 isn't a valid datetime!".format(yearArg, monthArg, dayArg, hourArg))
+        hour = datetime.now()
+    finally:
+        next = request.GET.get('next', '/')
+
+        context = {
+            'next': next,
+            'hour': hour,
+            'nextHour': getNextHour(hour),
+            'events': Event.objects.filter(
+                    startDate__lte=hour,
+                    endDate__gt=hour,
+                    creator=request.user
+                )
+        }
+
+        return render(request, 'calendars/hour.html', context)

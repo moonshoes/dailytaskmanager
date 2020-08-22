@@ -1,0 +1,22 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+    {{ today }}
+{% endblock %}
+
+{% block modalBody %}
+    {% for event in events %}
+        <button 
+            class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+            data-form-url="{% url 'event-detail' event.pk %}?next={{ next }}">
+            {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+        </button>
+    {% endfor %}
+    {% for task in tasks %}
+        <button 
+            class="task-wrapper day-entry-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+            data-form-url="{% url 'task-detail' task.pk %}?next={{ next }}">
+            {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+        </button>
+    {% endfor %}
+{% endblock %}

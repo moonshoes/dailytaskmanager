@@ -84,3 +84,11 @@ def getCurrentWeek(today, userCalendar):
             break
     
     return {'weekDaysList': week, 'firstWeekDay': firstDay, 'lastWeekDay': lastDay}
+
+def getNextHour(hour):
+    if not isinstance(hour, datetime.datetime):
+        raise TypeError("{} is not a datetime!".format(hour))
+    delta = datetime.timedelta(hours=1)
+    nextHour = hour + delta
+
+    return nextHour

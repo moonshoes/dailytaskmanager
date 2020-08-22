@@ -63,7 +63,7 @@ active
                     {% elif event.endDate|isToday:today %}
                         {% if event.endDate|compareEndDateHour:x %}
                             <button 
-                                class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                                 data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                                 {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"P" }}
                             </button>
@@ -71,17 +71,12 @@ active
                     {% elif event.startDate|isToday:today %}
                         {% if event.startDate|compareStartDateHour:x %}
                             <button 
-                                class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                                 data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                                 {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"j M, P" }}
                             </button>
                         {% endif %}
                     {% endif %}
-                    {% comment %} <button 
-                                class="task-wrapper btn btn-secondary btn-sm modal-trigger" 
-                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                                {{ event }}
-                            </button> {% endcomment %}
                 {% endfor %}
                 </div>
             </div>

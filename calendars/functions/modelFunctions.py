@@ -28,7 +28,6 @@ def getDailyEvents(day, user):
             Q(creator=user)
         )
     }
-    print(events)
     return events
 
 #Tasks and events
@@ -59,7 +58,6 @@ def getWeeklyEntries(week, user):
             }
         )
     week.update({'weekDaysList': dayEntryList})
-    print(week)
     return week
 
 #Habits
