@@ -40,14 +40,14 @@ active
                     {% if forloop.last %}border-right-0{% endif %}">
                     {% for event in day.eventList.allDay %}
                         <button 
-                            class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                            class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                             data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                            {{ event }}
+                            {{ event }} - All day
                         </button>
                     {% endfor %}
                     {% for task in day.taskList %}
                         <button 
-                            class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                            class="task-wrapper px-1 py-0 btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
                             data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
                             {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                         </button>
@@ -70,7 +70,7 @@ active
                             {% if event.startDate|isToday:day.day and event.endDate|isToday:day.day %}
                                 {% if event.startDate|compareStartDateHour:x and event.endDate|compareEndDateHour:x %}
                                     <button 
-                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                                         data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                                         {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
                                     </button>
@@ -78,7 +78,7 @@ active
                             {% elif event.endDate|isToday:day.day %}
                                 {% if event.endDate|compareEndDateHour:x %}
                                     <button 
-                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                                         data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                                         {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"P" }}
                                     </button>
@@ -86,13 +86,18 @@ active
                             {% elif event.startDate|isToday:day.day %}
                                 {% if event.startDate|compareStartDateHour:x %}
                                     <button 
-                                        class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                                        class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                                         data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                                         {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"j M, P" }}
                                     </button>
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
+                        <button 
+                            class="show-more btn px-1 py-0 btn-info btn-sm modal-trigger"
+                            data-form-url="{% url 'hour-detail' day.day|date:"Y" day.day|date:"n" day.day|date:"j" x %}?next={{ request.path }}">
+                            Show more
+                        </button>
                     </div>
                 </div>
             {% endfor %}

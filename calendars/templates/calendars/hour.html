@@ -1,0 +1,23 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+    {% if hour|date:"j" ==  nextHour|date:"j" %}
+        {{ hour }} - {{ nextHour|date:"P" }}
+    {% else %}
+        {{ hour }} - {{ nextHour }}
+    {% endif %}
+{% endblock %}
+
+{% block modalBody %}
+    {% for event in events %}
+        <button 
+            class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+            data-form-url="{% url 'event-detail' event.pk %}?next={{ next }}">
+            {% if event.startDate|date:"j" ==  event.endDate|date:"j" %}
+                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+            {% else %}
+                {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"j M, P" }}
+            {% endif %}
+        </button>
+    {% endfor %}
+{% endblock %}

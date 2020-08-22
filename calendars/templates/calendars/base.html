@@ -181,6 +181,13 @@
                 });
             });
 
+            $(document).on("click", ".day-entry-wrapper", function() {
+                $(".day-entry-wrapper").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+
             $("#create-task").modalForm({
                 modalID: "#modal",
                 formURL: "{% url 'task-create' %}?next={{ request.path }}"
@@ -204,6 +211,30 @@
                     $("#personalised").css('visibility', 'visible');
                 } else {
                     $("#personalised").css('visibility', 'hidden');
+                }
+            });
+
+            $(".month-item").each(function() {
+                if($(this).prop('scrollHeight') > $(this).outerHeight()) {
+                    $(this).find(".show-more").css("display", "block");
+                    
+                    var i = 1;
+                    while($(this).prop('scrollHeight') > $(this).outerHeight()) {
+                        $(this).find(".task-wrapper:nth-last-child(" + i + ")").css("display", "none");
+                        i++;
+                    }  
+                }
+            });
+
+            $(".week-grid .day-item").each(function() {
+                if($(this).prop('scrollHeight') > $(this).outerHeight()) {
+                    $(this).find(".show-more").css("display", "block");
+                    
+                    var i = 1;
+                    while($(this).prop('scrollHeight') > $(this).outerHeight()) {
+                        $(this).find(".task-wrapper:nth-last-child(" + i + ")").css("display", "none");
+                        i++;
+                    }  
                 }
             });
         });

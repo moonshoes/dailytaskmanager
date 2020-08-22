@@ -70,6 +70,11 @@ active
                         {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                     </button>
                 {% endfor %}
+                <button 
+                    class="show-more btn px-1 py-0 btn-info btn-sm modal-trigger"
+                    data-form-url="{% url 'day-detail' day.day|date:"Y" day.day|date:"n" day.day|date:"j" %}?next={{ request.path }}">
+                    Show more
+                </button>
             </div>
         {% endfor %}
         {% comment %} <div style="grid-column: 3;

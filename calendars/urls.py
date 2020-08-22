@@ -19,6 +19,7 @@ from .views import (
 from . import views
 
 urlpatterns = [
+    #Calendar
     path('', views.home, name='calendars-home'),
     path('year/', views.yearly, name='calendars-year'),
     path('year/<int:yearArg>/', views.yearly, name='calendars-year'),
@@ -28,15 +29,21 @@ urlpatterns = [
     path('week/<int:yearArg>/<int:monthArg>/<int:dayArg>/', views.weekly, name='calendars-week'),
     path('day/', views.daily, name='calendars-day'),
     path('day/<int:yearArg>/<int:monthArg>/<int:dayArg>/', views.daily, name='calendars-day'),
+    path('day/<int:yearArg>/<int:monthArg>/<int:dayArg>/detail/', views.DayDetailView, name='day-detail'),
+    path('hour/<int:yearArg>/<int:monthArg>/<int:dayArg>/<int:hourArg>/detail/', views.HourDetailView, name='hour-detail'),
+
+    #Tasks
     path('task/new/', TaskCreateView.as_view(), name='task-create'),
-    path('event/new/', EventCreateView.as_view(), name='event-create'),
     path('tasks/', UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
-    path('events/', FutureEventsListView.as_view(), name='future-events'),
     path('task/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
-    path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
     path('task/<int:pk>/update', TaskUpdateView.as_view(), name='task-update'),
-    path('event/<int:pk>/update', EventUpdateView.as_view(), name='event-update'),
     path('task/<int:pk>/delete', TaskDeleteView.as_view(), name='task-delete'),
+
+    #Events
+    path('event/new/', EventCreateView.as_view(), name='event-create'),
+    path('events/', FutureEventsListView.as_view(), name='future-events'),
+    path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
+    path('event/<int:pk>/update', EventUpdateView.as_view(), name='event-update'),
     path('event/<int:pk>/delete', EventDeleteView.as_view(), name='event-delete'),
 
     #Habit URLs
