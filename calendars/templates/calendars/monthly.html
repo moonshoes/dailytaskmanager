@@ -28,11 +28,20 @@ active
             <div class="month-item border p-1">
                 <div class="text-center">
                     {% if forloop.counter <= 7 %}
-                        {{ day.day|date:"D, j" }}
+                        {% if user.is_authenticated %}
+                            {{ day.day|date:"D, j" }}
+                        {% else %}
+                            {{ day|date:"D, j" }}
+                        {% endif %}
                     {% else %}
-                        {{ day.day|date:"j" }}
+                        {% if user.is_authenticated %}
+                            {{ day.day|date:"j" }}
+                        {% else %}
+                            {{ day|date:"j" }}
+                        {% endif %}
                     {% endif %}
                 </div>
+                {% if user.is_authenticated %}
                 {% for event in day.eventList %}
                     <button 
                         class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
@@ -75,6 +84,7 @@ active
                     data-form-url="{% url 'day-detail' day.day|date:"Y" day.day|date:"n" day.day|date:"j" %}?next={{ request.path }}">
                     Show more
                 </button>
+                {% endif %}
             </div>
         {% endfor %}
         {% comment %} <div style="grid-column: 3;
