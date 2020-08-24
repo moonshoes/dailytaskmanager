@@ -152,7 +152,7 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
 
         if not request.user.is_anonymous:
             context['dailyTasks'] = getDailyTasks(datetime.date.today(), request.user)
-            context['dailyEvents'] = getDailyEvents(datetime.date.isoweekday, request.user)
+            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
             context['currentWeek'] = getWeeklyEntries(currentWeek, request.user)
 
         return render(request, 'calendars/weekly.html', context)
