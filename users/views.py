@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -11,10 +12,8 @@ from bootstrap_modal_forms.generic import (
 from users.forms import (
     CustomRegistrationForm, 
     CustomAuthenticationForm,
-    UserUpdateForm,
-    ProfileUpdateForm
+    UserUpdateForm
 )
-from .models import Profile
 
 class RegistrationView(BSModalCreateView):
     form_class = CustomRegistrationForm
@@ -32,8 +31,9 @@ class CustomLoginView(BSModalLoginView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class ProfileDetailView(LoginRequiredMixin, BSModalReadView):
-    model = Profile 
+class UserDetailView(LoginRequiredMixin, BSModalReadView):
+    model = User
+    template_name = 'users/user_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -41,16 +41,11 @@ class ProfileDetailView(LoginRequiredMixin, BSModalReadView):
         context['next'] = next
         return context
 
-class ProfileUpdateView(LoginRequiredMixin, BSModalUpdateView):
-    model = Profile
-    form_class = ProfileUpdateForm
-    success_message = "Your profile has been updated!"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        userForm = UserUpdateForm(instance=self.request.user)
-        context['userForm'] = userForm
-        return context
+class UserUpdateView(LoginRequiredMixin, BSModalUpdateView):
+    model = User
+    template_name = 'users/user_form.html'
+    form_class = UserUpdateForm
+    success_message = "Your user information has been updated!"
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')

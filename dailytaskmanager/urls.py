@@ -23,7 +23,7 @@ urlpatterns = [
     path('register/', users_views.RegistrationView.as_view(), name='register'),
     path('login/', users_views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('profile/<int:pk>/', users_views.ProfileDetailView.as_view(), name='profile-detail'),
-    path('profile/<int:pk>/update', users_views.ProfileUpdateView.as_view(), name='profile-update'),
+    path('user/<int:pk>/', users_views.UserDetailView.as_view(), name='user-detail'),
+    path('user/<int:pk>/update', users_views.UserUpdateView.as_view(), name='user-update'),
     path('', include('calendars.urls')),
 ]
