@@ -1,0 +1,23 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block modalTitle %}
+    Your user information
+{% endblock %}
+
+{% block modalBody %}
+    <div>
+        <span class="font-weight-bolder">Name:</span> {{ user.first_name }} {{ user.last_name }}
+    </div>
+    <div>
+        <span class="font-weight-bolder">Email:</span> {{ user.email }}
+    </div>
+{% endblock %}
+
+{% block footerButton %}
+    <button type="button" id="update-user" class="btn btn-success" data-form-url="{% url 'user-update' user.pk %}?next={{ next }}">
+        Update information
+    </button>
+    {% comment %} <button type="button" id="delete-task" class="btn btn-danger" data-form-url="{% url 'task-delete' task.pk %}?next={{ next }}">
+        Delete
+    </button> {% endcomment %}
+{% endblock %}

@@ -58,17 +58,19 @@ def monthly(request, yearArg=-1, monthArg=-1):
         month = today.month
     finally:
         monthList = cal.itermonthdates(year, month)
-        monthEntries = getMonthlyEntries(monthList, request.user)
 
         context = {
             'prevMonth': getPreviousMonth(year, month),
             'month': calendar.month_name[month],
             'nextMonth': getNextMonth(year, month),
             'year': year,
-            'monthList': monthEntries,
-            'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'monthList': monthList
         }
+
+        if not request.user.is_anonymous:
+            context['monthList'] = getMonthlyEntries(monthList, request.user)
+            context['dailyTasks'] = getDailyTasks(today, request.user)
+            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
 
         return render(request, 'calendars/monthly.html', context)
 
@@ -91,10 +93,12 @@ def yearly(request, yearArg=-1):
             'prevYear': year - 1,
             'year': year,
             'nextYear': year + 1,
-            'yearList': yearList,
-            'dailyTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user)
+            'yearList': yearList
         }
+
+        if not request.user.is_anonymous:
+            context['dailyTasks'] = getDailyTasks(today, request.user)
+            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
 
         return render(request, 'calendars/yearly.html', context)
 
@@ -114,12 +118,14 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
         context = {
             'prevDay': prevDay,
             'nextDay': nextDay,
-            'today': today,
-            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
-            'dayTasks': getDailyTasks(today, request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
-            'dailyEvents': getDailyEvents(today, request.user)
+            'today': today
         }
+
+        if not request.user.is_anonymous:
+            context['dailyTasks'] = getDailyTasks(datetime.date.today(), request.user)
+            context['dayTasks'] = getDailyTasks(today, request.user)
+            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['dailyEvents'] = getDailyEvents(today, request.user)
 
         return render(request, 'calendars/daily.html', context)
 
@@ -140,11 +146,14 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         
         context = {
             'prevWeek': prevWeek,
-            'currentWeek': getWeeklyEntries(currentWeek, request.user),
-            'nextWeek': nextWeek,
-            'dailyTasks': getDailyTasks(datetime.date.today(), request.user),
-            'dailyHabits': getDailyHabits(datetime.date.isoweekday, request.user),
+            'currentWeek': currentWeek,
+            'nextWeek': nextWeek
         }
+
+        if not request.user.is_anonymous:
+            context['dailyTasks'] = getDailyTasks(datetime.date.today(), request.user)
+            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['currentWeek'] = getWeeklyEntries(currentWeek, request.user)
 
         return render(request, 'calendars/weekly.html', context)
 
@@ -172,7 +181,7 @@ class EventCreateView(LoginRequiredMixin, BSModalCreateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class UnfinishedTasksListView(ListView):
+class UnfinishedTasksListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'calendars/unfinished_tasks.html'
     context_object_name = 'tasks'
@@ -191,7 +200,7 @@ class UnfinishedTasksListView(ListView):
         context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
         return context
 
-class TaskDetailView(BSModalReadView):
+class TaskDetailView(LoginRequiredMixin, BSModalReadView):
     model = Task
 
     def get_context_data(self, **kwargs):
@@ -203,7 +212,7 @@ class TaskDetailView(BSModalReadView):
         return context
 
 
-class FutureEventsListView(ListView):
+class FutureEventsListView(LoginRequiredMixin, ListView):
     model = Event
     template_name = 'calendars/future_events.html'
     context_object_name = 'events'
@@ -226,7 +235,7 @@ class FutureEventsListView(ListView):
         context['now'] = now
         return context
 
-class EventDetailView(BSModalReadView):
+class EventDetailView(LoginRequiredMixin, BSModalReadView):
     model = Event
 
     def get_context_data(self, **kwargs):
@@ -239,7 +248,7 @@ class EventDetailView(BSModalReadView):
         context['next'] = next
         return context
 
-class TaskUpdateView(BSModalUpdateView):
+class TaskUpdateView(LoginRequiredMixin, BSModalUpdateView):
     model = Task
     form_class = TaskForm
     success_message = "The task has been updated!"
@@ -251,7 +260,7 @@ class TaskUpdateView(BSModalUpdateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class EventUpdateView(BSModalUpdateView):
+class EventUpdateView(LoginRequiredMixin, BSModalUpdateView):
     model = Event
     form_class = EventForm
     success_message = "The event has been updated!"
@@ -263,7 +272,7 @@ class EventUpdateView(BSModalUpdateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class TaskDeleteView(BSModalDeleteView):
+class TaskDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Task
     success_message = "The task has been deleted!"
     template_name = 'calendars/confirm_delete.html'
@@ -271,7 +280,7 @@ class TaskDeleteView(BSModalDeleteView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class EventDeleteView(BSModalDeleteView):
+class EventDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Event
     success_message = "The event has been deleted!"
     template_name = 'calendars/confirm_delete.html'
@@ -280,7 +289,7 @@ class EventDeleteView(BSModalDeleteView):
         return self.request.GET.get('next', '/')
 
 #Habits
-class HabitListView(ListView):
+class HabitListView(LoginRequiredMixin, ListView):
     model = Habit
     context_object_name = 'habits'
 
@@ -298,7 +307,7 @@ class HabitListView(ListView):
         context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
         return context
 
-class HabitDetailView(BSModalReadView):
+class HabitDetailView(LoginRequiredMixin, BSModalReadView):
     model = Habit
 
     def get_context_data(self, **kwargs):
@@ -309,7 +318,7 @@ class HabitDetailView(BSModalReadView):
         context['next'] = next
         return context
 
-class HabitDeleteView(BSModalDeleteView):
+class HabitDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Habit
     success_message = "The habit has been deleted!"
     template_name = 'calendars/confirm_delete.html'
@@ -355,7 +364,7 @@ class HabitCreateView(LoginRequiredMixin, BSModalCreateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class HabitUpdateView(BSModalUpdateView):
+class HabitUpdateView(LoginRequiredMixin, BSModalUpdateView):
     model = Habit
     form_class = HabitForm
     success_message = "The habit has been updated!"

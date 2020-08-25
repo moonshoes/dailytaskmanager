@@ -32,14 +32,14 @@ active
         <div class="row task-bar bg-main">
             {% for event in dailyEvents.allDay %}
                 <button 
-                    class="task-wrapper btn btn-primary btn-sm modal-trigger" 
+                    class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
                     data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                     {{ event }} - All day
                 </button>
             {% endfor %}
             {% for task in dayTasks %}
                 <button 
-                    class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    class="task-wrapper px-1 py-0 btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
                     data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
                     {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                 </button>
