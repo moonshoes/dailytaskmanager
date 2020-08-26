@@ -32,11 +32,11 @@ active
                 </div>
                 <div class="row no-gutters row-cols-7 text-center">
                     {% for day in month.month %}
-                        <div class="col border rounded
+                        <div class="col border rounded modal-trigger
                                 {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
                                     text-muted
-                                {% endif %}
-                            ">
+                                {% endif %}"
+                            data-form-url="{% url 'day-detail' day|date:"Y" day|date:"n" day|date:"j" %}?next={{ request.path }}">
                             {{ day|date:"j" }}
                         </div>
                     {% endfor %}
