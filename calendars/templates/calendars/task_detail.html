@@ -1,7 +1,7 @@
 {% extends 'calendars/baseModal.html' %}
 
 {% block modalTitle %}
-    {{ task.name }}
+    {{ task.name }} {% if task.completed %}- Done!{% endif %}
 {% endblock %}
 
 {% block modalBody %}
@@ -14,6 +14,9 @@
     <div>
         <span class="font-weight-bolder">Date:</span> {{ task.date }}
     </div>
+    <div>
+        <span class="font-weight-bolder">Completed?</span> {% if task.completed %}Yes{% else %}No{% endif %}
+    </div>
 {% endblock %}
 
 {% block footerButton %}
@@ -23,4 +26,10 @@
     <button type="button" id="delete-task" class="btn btn-danger" data-form-url="{% url 'task-delete' task.pk %}?next={{ next }}">
         Delete
     </button>
+{% endblock %}
+
+{% block additionalFooterButton %}
+    <a role="button" id="toggle-complete-task" class="btn btn-primary" href="{% url 'toggle-complete-task' task.pk %}?next={{ next }}">
+        {% if task.completed %}Not done? Set to incomplete{% else %}Complete task{% endif %}
+    </a>
 {% endblock %}

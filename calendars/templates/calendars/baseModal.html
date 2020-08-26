@@ -8,8 +8,12 @@
     <div class="modal-body">
         {% block modalBody %} {% endblock %}
     </div>
-    <div class="modal-footer">
-        {% block footerButton %} {% endblock %}
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <div class="modal-footer d-flex">
+        <div>
+            {% block footerButton %} {% endblock %}
+        </div>
+        <div class="ml-auto">
+            {% block additionalFooterButton %} {% endblock %}
+        </div>
     </div>
 {% block formEnd %} {% endblock %}

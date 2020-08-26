@@ -14,6 +14,14 @@ def getWeeklyTasks(week, user):
         taskList.append(getDailyTasks(day, user))
     return taskList
 
+def findTask(pk):
+    task = Task.objects.get(pk=pk)
+    return task
+
+def toggleComplete(task):
+    task.toggleCompleted()
+
+
 #Events
 def getDailyEvents(day, user):
     events = {
