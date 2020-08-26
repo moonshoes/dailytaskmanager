@@ -33,7 +33,9 @@ from calendars.functions.modelFunctions import (
     getWeeklyTasks, 
     getMonthlyEntries,
     getDailyEvents,
-    getWeeklyEntries
+    getWeeklyEntries,
+    findTask,
+    toggleComplete
 )
 
 def home(request):
@@ -454,3 +456,10 @@ def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
         }
 
         return render(request, 'calendars/hour.html', context)
+
+def toggleCompleteTask(request, pk):
+    task = findTask(pk)
+    toggleComplete(task)
+    next = request.GET.get('next', '/')
+    return redirect(next)
+     

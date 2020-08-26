@@ -19,6 +19,10 @@ class Task(CalendarEntry):
     def __str__(self):
         return self.name
 
+    def toggleCompleted(self):
+        self.completed = not self.completed
+        self.save()
+
 class Event(CalendarEntry):
     location = models.CharField(max_length=100, null=True, blank=True)
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)

@@ -34,9 +34,9 @@
                                 Create
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownCreateButton">
-                                <button type="button" class="dropdown-item" id="create-task">Task</a>
-                                <button type="button" class="dropdown-item" id="create-event">Event</a>
-                                <button type="button" class="dropdown-item" id="create-habit">Habit</a>
+                                <button type="button" class="dropdown-item modal-trigger" data-form-url="{% url 'task-create' %}?next={{ request.path }}">Task</a>
+                                <button type="button" class="dropdown-item modal-trigger" data-form-url="{% url 'event-create' %}?next={{ request.path }}">Event</a>
+                                <button type="button" class="dropdown-item modal-trigger" data-form-url="{% url 'habit-create' %}?next={{ request.path }}">Habit</a>
                             </div>
                         </div>
                         <a class="nav-item nav-link" href="{% url 'list-habits' %}">Habits</a>
@@ -62,8 +62,8 @@
                         <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'user-detail' user.pk %}?next={{ request.path }}">Hi, {{ user.first_name }}!</a>
                         <a class="nav-item nav-link" id="logout" href="{% url 'logout' %}">Log out</a>
                     {% else %}
-                        <a class="nav-item nav-link" id="login">Log in</a>
-                        <a class="nav-item nav-link" id="register">Register</a>
+                        <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'login' %}?next={{ request.path }}">Log in</a>
+                        <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'register' %}?next={{ request.path }}">Register</a>
                     {% endif %}
                 </div>
             </div>
@@ -87,15 +87,11 @@
                             </div>
                             <ul>
                                 {% for task in dailyTasks %}
-                                    <li>
-                                        <div class="form-check">                
-                                            <input class="form-check-input" type="checkbox" value="" id="{{ task.id }}"
-                                                {% if task.completed %} checked {% endif %}>
-                                            <label class="form-check-label" for="{{ task.id }}">
-                                                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-                                            </label>
-                                        </div>
-                                    </li>
+                                    <button 
+                                        class="task-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                                        data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
+                                        {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                                    </button>
                                 {% empty %}
                                     <i>No tasks today!</i>
                                 {% endfor %}
@@ -150,43 +146,8 @@
                 });
             });
 
-            $(document).on("click", "#update-task", function() {
-                $("#update-task").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $(document).on("click", "#delete-task", function() {
-                $("#delete-task").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $(document).on("click", "#update-event", function() {
-                $("#update-event").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $(document).on("click", "#delete-event", function() {
-                $("#delete-event").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $(document).on("click", "#update-habit", function() {
-                $("#update-habit").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $(document).on("click", "#delete-habit", function() {
-                $("#delete-habit").modalForm({
+            $(document).on("click", ".in-modal-trigger", function() {
+                $(this).modalForm({
                     modalID: "#modal",
                     formURL: $(this).data('form-url')
                 });
@@ -197,38 +158,6 @@
                     modalID: "#modal",
                     formURL: $(this).data('form-url')
                 });
-            });
-
-            $(document).on("click", "#update-user", function() {
-                $("#update-user").modalForm({
-                    modalID: "#modal",
-                    formURL: $(this).data('form-url')
-                });
-            });
-
-            $("#create-task").modalForm({
-                modalID: "#modal",
-                formURL: "{% url 'task-create' %}?next={{ request.path }}"
-            });
-
-            $("#create-event").modalForm({
-                modalID: "#modal",
-                formURL: "{% url 'event-create' %}?next={{ request.path }}"
-            });
-
-            $("#create-habit").modalForm({
-                modalID: "#modal",
-                formURL: "{% url 'habit-create' %}?next={{ request.path }}"
-            });
-
-            $("#register").modalForm({
-                modalID: "#modal",
-                formURL: "{% url 'register' %}?next={{ request.path }}"
-            });
-
-            $("#login").modalForm({
-                modalID: "#modal",
-                formURL: "{% url 'login' %}?next={{ request.path }}"
             });
 
 

@@ -38,6 +38,7 @@ urlpatterns = [
     path('task/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
     path('task/<int:pk>/update', TaskUpdateView.as_view(), name='task-update'),
     path('task/<int:pk>/delete', TaskDeleteView.as_view(), name='task-delete'),
+    path('task/<int:pk>/toggle-complete', views.toggleCompleteTask, name='toggle-complete-task'),
 
     #Events
     path('event/new/', EventCreateView.as_view(), name='event-create'),
