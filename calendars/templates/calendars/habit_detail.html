@@ -17,10 +17,10 @@
 {% endblock %}
 
 {% block footerButton %}
-    <button type="button" id="update-habit" class="btn btn-success" data-form-url="{% url 'habit-update' habit.pk %}?next={{ next }}">
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'habit-update' habit.pk %}?next={{ next }}">
         Update
     </button>
-    <button type="button" id="delete-habit" class="btn btn-danger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
+    <button type="button" class="btn btn-danger in-modal-trigger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
         Delete
     </button>
 {% endblock %}

@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block footerButton %}
-    <button type="button" id="update-user" class="btn btn-success" data-form-url="{% url 'user-update' user.pk %}?next={{ next }}">
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'user-update' user.pk %}?next={{ next }}">
         Update information
     </button>
     {% comment %} <button type="button" id="delete-task" class="btn btn-danger" data-form-url="{% url 'task-delete' task.pk %}?next={{ next }}">

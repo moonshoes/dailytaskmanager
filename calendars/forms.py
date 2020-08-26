@@ -99,10 +99,9 @@ class HabitForm(BSModalModelForm):
 
     def __init__(self, *args, **kwargs):
         super(HabitForm, self).__init__(*args, **kwargs)
-        if self.instance:
+        if Habit.objects.all().filter(pk=self.instance.pk).exists():
             habit = Habit.objects.get(pk=self.instance.pk)
             frequency = habit.frequency()
-            print(frequency)
             if frequency == "Every day":
                 self.fields['frequencyChoice'].initial = 'daily'
             else:
