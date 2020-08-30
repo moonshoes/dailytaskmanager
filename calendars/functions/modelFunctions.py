@@ -15,10 +15,9 @@ def getWeeklyTasks(week, user):
     return taskList
 
 def findTask(pk):
-    task = Task.objects.get(pk=pk)
-    return task
+    return Task.objects.get(pk=pk)
 
-def toggleComplete(task):
+def toggleCompleteTask(task):
     task.toggleCompleted()
 
 
@@ -38,7 +37,7 @@ def getDailyEvents(day, user):
     }
     return events
 
-#Tasks and events
+#Entries (Events, Tasks and Habits)
 def getMonthlyEntries(month, user):
     dayEntryList = []
     for day in month:
@@ -50,7 +49,8 @@ def getMonthlyEntries(month, user):
                     startDate__date__lte=day,
                     endDate__date__gte=day,
                     creator=user
-                )
+                ),
+                'habitList': getDailyHabits(day, user)
             }
         )
     return dayEntryList
@@ -62,16 +62,18 @@ def getWeeklyEntries(week, user):
             {
                 'day': day,
                 'taskList': getDailyTasks(day, user),
-                'eventList': getDailyEvents(day, user)
+                'eventList': getDailyEvents(day, user),
+                'habitList': getDailyHabits(day, user)
             }
         )
     week.update({'weekDaysList': dayEntryList})
     return week
 
 #Habits
-def getDailyHabits(weekDay, user):
+def getDailyHabits(day, user):
     #throw error if weekday not >1 or <8
-    habitsUser = Habit.objects.filter(creator=user)
+    weekDay = day.isoweekday()
+    habitsUser = Habit.objects.filter(creator=user, creationDate__lte=day)
 
     if weekDay == 1:
         habits = habitsUser.filter(monday=True)
@@ -89,3 +91,28 @@ def getDailyHabits(weekDay, user):
         habits = habitsUser.filter(sunday=True)
     
     return habits
+
+def findHabit(pk):
+    return Habit.objects.get(pk=pk)
+
+def toggleCompleteHabit(habit, dateArg):
+    habit.toggleCompleteToday(dateArg)
+
+def getDisabledDaysHabit(habit):
+    frequencyArray = habit.frequencyToArray()
+    disabledDays = []
+    for iteration, day in enumerate(frequencyArray):
+        if not day:
+            disabledDays.append(iteration)
+    return disabledDays
+
+def getYearStreak(habit, year):
+    days = []
+    for streak in habit.getStreaks():
+        start = streak.startDate
+        days.append(start)
+        end = streak.endDate
+        while start != end:
+            start = streak.nextFrequencyDate(start)
+            days.append(start)
+    return days

@@ -6,12 +6,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView
+from .models import Habit
 
 from bootstrap_modal_forms.generic import (
     BSModalCreateView, 
     BSModalReadView,
     BSModalUpdateView,
-    BSModalDeleteView
+    BSModalDeleteView,
+    BSModalFormView
 )
 
 from calendars.models import Task, Event, Habit
@@ -28,15 +30,17 @@ from calendars.functions.calendarFunctions import (
     getNextHour
 )
 from calendars.functions.modelFunctions import (
-    getDailyTasks, 
-    getDailyHabits, 
     getWeeklyTasks, 
     getMonthlyEntries,
     getDailyEvents,
     getWeeklyEntries,
     findTask,
-    toggleComplete
+    toggleCompleteTask,
+    findHabit,
+    toggleCompleteHabit
 )
+import calendars.functions.modelFunctions as modelFunctions
+from .forms import PreviousCompletedHabitDaysForm
 
 def home(request):
     return redirect('calendars-month')
@@ -62,6 +66,7 @@ def monthly(request, yearArg=-1, monthArg=-1):
         monthList = cal.itermonthdates(year, month)
 
         context = {
+            'today': datetime.date.today(),
             'prevMonth': getPreviousMonth(year, month),
             'month': calendar.month_name[month],
             'nextMonth': getNextMonth(year, month),
@@ -71,27 +76,28 @@ def monthly(request, yearArg=-1, monthArg=-1):
 
         if not request.user.is_anonymous:
             context['monthList'] = getMonthlyEntries(monthList, request.user)
-            context['dailyTasks'] = getDailyTasks(today, request.user)
-            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['dailyTasks'] = modelFunctions.getDailyTasks(today, request.user)
+            context['dailyHabits'] = modelFunctions.getDailyHabits(today, request.user)
 
         return render(request, 'calendars/monthly.html', context)
 
 def yearly(request, yearArg=-1):
     try:
         cal = calendar.Calendar(0)
+        today = datetime.date.today()
         if yearArg == -1:
-            today = datetime.date.today()
             year = today.year
         else:
             year = yearArg
+        yearList = getYearList(year, cal)
     except InvalidYearNumber as invalidYearError:
         messages.warning(request, invalidYearError)
         today = datetime.date.today()
         year = today.year
-    finally:
         yearList = getYearList(year, cal)
-
+    finally:
         context = {
+            'today': datetime.date.today(),
             'prevYear': year - 1,
             'year': year,
             'nextYear': year + 1,
@@ -99,8 +105,8 @@ def yearly(request, yearArg=-1):
         }
 
         if not request.user.is_anonymous:
-            context['dailyTasks'] = getDailyTasks(today, request.user)
-            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['dailyTasks'] = modelFunctions.getDailyTasks(today, request.user)
+            context['dailyHabits'] = modelFunctions.getDailyHabits(today, request.user)
 
         return render(request, 'calendars/yearly.html', context)
 
@@ -120,14 +126,16 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
         context = {
             'prevDay': prevDay,
             'nextDay': nextDay,
-            'today': today
+            'currentDay': today,
+            'today': datetime.date.today()
         }
 
         if not request.user.is_anonymous:
-            context['dailyTasks'] = getDailyTasks(datetime.date.today(), request.user)
-            context['dayTasks'] = getDailyTasks(today, request.user)
-            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['dailyTasks'] = modelFunctions.getDailyTasks(datetime.date.today(), request.user)
+            context['dayTasks'] = modelFunctions.getDailyTasks(today, request.user)
+            context['dailyHabits'] = modelFunctions.getDailyHabits(datetime.date.today(), request.user)
             context['dailyEvents'] = getDailyEvents(today, request.user)
+            context['dayHabits'] = modelFunctions.getDailyHabits(today, request.user)
 
         return render(request, 'calendars/daily.html', context)
 
@@ -147,14 +155,15 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         currentWeek = getCurrentWeek(today, cal)
         
         context = {
+            'today': datetime.date.today(),
             'prevWeek': prevWeek,
             'currentWeek': currentWeek,
             'nextWeek': nextWeek
         }
 
         if not request.user.is_anonymous:
-            context['dailyTasks'] = getDailyTasks(datetime.date.today(), request.user)
-            context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, request.user)
+            context['dailyTasks'] = modelFunctions.getDailyTasks(datetime.date.today(), request.user)
+            context['dailyHabits'] = modelFunctions.getDailyHabits(datetime.date.today(), request.user)
             context['currentWeek'] = getWeeklyEntries(currentWeek, request.user)
 
         return render(request, 'calendars/weekly.html', context)
@@ -198,8 +207,8 @@ class UnfinishedTasksListView(LoginRequiredMixin, ListView):
         today = datetime.date.today()
         user = self.request.user
 
-        context['dailyTasks'] = getDailyTasks(today, user)
-        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
+        context['dailyTasks'] = modelFunctions.getDailyTasks(today, user)
+        context['dailyHabits'] = modelFunctions.getDailyHabits(today, user)
         return context
 
 class TaskDetailView(LoginRequiredMixin, BSModalReadView):
@@ -232,8 +241,9 @@ class FutureEventsListView(LoginRequiredMixin, ListView):
         now = timezone.now
         user = self.request.user
 
-        context['dailyTasks'] = getDailyTasks(today, user)
-        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
+        context['dailyTasks'] = modelFunctions.getDailyTasks(today, user)
+        context['dailyHabits'] = modelFunctions.getDailyHabits(today, user)
+        context['today'] = datetime.date.today()
         context['now'] = now
         return context
 
@@ -305,8 +315,10 @@ class HabitListView(LoginRequiredMixin, ListView):
         today = datetime.date.today()
         user = self.request.user
 
-        context['dailyTasks'] = getDailyTasks(today, user)
-        context['dailyHabits'] = getDailyHabits(datetime.date.isoweekday, user)
+        context['dailyTasks'] = modelFunctions.getDailyTasks(today, user)
+        context['dailyHabits'] = modelFunctions.getDailyHabits(today, user)
+        context['today'] = today
+        context['currentYear'] = today.year
         return context
 
 class HabitDetailView(LoginRequiredMixin, BSModalReadView):
@@ -315,9 +327,8 @@ class HabitDetailView(LoginRequiredMixin, BSModalReadView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        next = self.request.GET.get('next', '/')
-
-        context['next'] = next
+        context['next'] = self.request.GET.get('next', '/')
+        context['today'] = datetime.date.today()
         return context
 
 class HabitDeleteView(LoginRequiredMixin, BSModalDeleteView):
@@ -425,12 +436,13 @@ def DayDetailView(request, yearArg, monthArg, dayArg):
         context = {
             'next': next,
             'today': today,
-            'tasks': getDailyTasks(today, request.user),
+            'tasks': modelFunctions.getDailyTasks(today, request.user),
             'events': Event.objects.filter(
                     startDate__date__lte=today,
                     endDate__date__gte=today,
                     creator=request.user
-                )
+                ),
+            'habits': modelFunctions.getDailyHabits(today, request.user)
         }
 
         return render(request, 'calendars/day.html', context)
@@ -459,7 +471,72 @@ def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
 
 def toggleCompleteTask(request, pk):
     task = findTask(pk)
-    toggleComplete(task)
+    modelFunctions.toggleCompleteTask(task)
     next = request.GET.get('next', '/')
     return redirect(next)
-     
+
+def toggleCompleteHabit(request, pk):
+    habit = findHabit(pk)
+    today = datetime.date.today()
+    modelFunctions.toggleCompleteHabit(habit, today)
+
+    next = request.GET.get('next', '/')
+    return redirect(next)
+
+class CompleteEarlierDaysHabit(BSModalFormView):
+    # habit = findHabit(self.habit_pk)
+    # disabledDays = modelFunctions.getDisabledDaysHabit(habit)
+    # today = datetime.date.today()
+    form_class = PreviousCompletedHabitDaysForm
+    template_name = 'habit_previous_days_form.html'
+    success_message = "You've successfully added previous completed dates!"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        habit = findHabit(self.request.GET.get('habit'))
+        kwargs['disabledDays'] = modelFunctions.getDisabledDaysHabit(habit)
+        kwargs['maxDate'] = datetime.date.today()
+        return kwargs
+
+    # def __init__(self, *args, **kwargs):
+    #     super(completeEarlierDaysHabit, self).__init__(*args, **kwargs)
+    #     self.habit = findHabit(self.request.GET.get('habit'))
+    #     self.disabledDays = modelFunctions.getDisabledDaysHabit(habit)
+    #     self.today = datetime.date.today()
+
+
+    def form_valid(self, form):
+        form.addPreviousDates(habit)
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+def habitYearStreak(request, pk, yearArg=-1):
+    try:
+        cal = calendar.Calendar(0)
+        today = datetime.date.today()
+        if yearArg == -1:
+            year = today.year
+        else:
+            year = yearArg
+        yearList = getYearList(year, cal)
+    except InvalidYearNumber as invalidYearError:
+        messages.warning(request, invalidYearError)
+        today = datetime.date.today()
+        year = today.year
+        yearList = getYearList(year, cal)
+    finally:
+        habit = findHabit(pk)
+        context = {
+            'today': datetime.date.today(),
+            'prevYear': year - 1,
+            'year': year,
+            'nextYear': year + 1,
+            'yearList': yearList,
+            'dailyTasks': modelFunctions.getDailyTasks(today, request.user),
+            'dailyHabits': modelFunctions.getDailyHabits(today, request.user),
+            'yearStreak': modelFunctions.getYearStreak(habit, year),
+            'habit': habit
+        }
+
+        return render(request, 'calendars/habit_year_streak.html', context)

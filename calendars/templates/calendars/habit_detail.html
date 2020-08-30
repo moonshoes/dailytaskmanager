@@ -1,7 +1,9 @@
 {% extends 'calendars/baseModal.html' %}
+{% load calendars_filters %}
 
 {% block modalTitle %}
-   <div style="background-color: {{ habit.iconColor }}" class="habitIcon"></div> {{ habit.name }}
+   <div style="background-color: {{ habit.iconColor }}" class="habitIcon"></div> 
+   {{ habit.name }}{% if habit|habitCompletedToday:today %} - Done today!{% endif %}
 {% endblock %}
 
 {% block modalBody %}
@@ -14,6 +16,16 @@
     <div>
         <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
     </div>
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}?habit={{ habit.pk }}">
+        Update
+    </button>
+    {% comment %} <small>
+        (Wish to add additional dates? 
+            <a class="in-modal-trigger" href="#" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}?habit={{ habit.pk }}">
+                Click here.
+            </a>
+        )
+    </small> {% endcomment %}
 {% endblock %}
 
 {% block footerButton %}
@@ -23,4 +35,16 @@
     <button type="button" class="btn btn-danger in-modal-trigger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
         Delete
     </button>
+{% endblock %}
+
+{% block additionalFooterButton %}
+    {% if habit|canBeCompletedToday:today %}
+        <a role="button" class="btn btn-primary" href="{% url 'toggle-complete-habit' habit.pk %}?next={{ next }}">
+            {% if habit|habitCompletedToday:today %}
+                Not done? Set to incomplete
+            {% else %}
+                Complete task
+            {% endif %}
+        </a>
+    {% endif %}
 {% endblock %}

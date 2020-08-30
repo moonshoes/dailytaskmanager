@@ -1,5 +1,6 @@
 from django import template
 import datetime, operator, pytz
+from calendars.models import Habit, Event
 
 register = template.Library()
 
@@ -22,8 +23,8 @@ def hour(value):
     return '{:d} {}'.format(remainder, suffix)
 
 @register.filter()
-def currentlyHappening(value, arg):
-    return value >= arg
+def currentlyHappening(event, now):
+    return event.startDate <= now and event.endDate > now
 
 @register.filter()
 def sameDayEvent(start, end):
@@ -58,6 +59,16 @@ def compareEndDateHour(date, hour):
         (hour != date.time().hour or 
             (hour == date.time().hour and
             date.time().minute > 0)))
+
+@register.filter()
+def habitCompletedToday(habit, date):
+    return habit.completedToday(date)
+
+@register.filter()
+def canBeCompletedToday(habit, date):
+    weekday = date.weekday()
+    frequencyArray = habit.frequencyToArray()
+    return frequencyArray[weekday]
 
 # @register.filter()
 # def columnLine(value):

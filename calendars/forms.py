@@ -1,7 +1,7 @@
 from django import forms
 import datetime
 from calendars.models import Task, Event, Habit
-from bootstrap_modal_forms.forms import BSModalModelForm
+from bootstrap_modal_forms.forms import BSModalModelForm, BSModalForm
 from tempus_dominus.widgets import DatePicker, DateTimePicker
 
 class TaskForm(BSModalModelForm):
@@ -136,3 +136,31 @@ class HabitForm(BSModalModelForm):
                 self.add_error('personalisedFrequency', msg)
             else:
                 print(personalisedFrequency)
+
+class PreviousCompletedHabitDaysForm(BSModalForm):
+    dates = forms.CharField()
+    
+    def __init__(self, *args, **kwargs):
+        self.disabledDates = kwargs.pop('disabledDays')
+        self.maxDate = kwargs.pop('maxDate')
+        super(PreviousCompletedHabitDaysForm, self).__init__(*args, **kwargs)
+
+        widgets = {
+            'dates': DatePicker(
+                options={
+                    'format': 'DD/MM/YYYY',
+                    'allowMultiDate': True,
+                    'multidateSeparator': ',',
+                    'maxDate': self.maxDate,
+                    'disabledDates': self.disabledDates
+                },
+                attrs={
+                    'append': 'fa fa-calendar',
+                    'icon-toggle': True,
+            })
+        }
+
+    def addPreviousDates(self, habit):
+        super.clean()
+        cleaned_dates = self.cleaned_data.get("dates")
+        habit.completeEarlierDays(cleaned_dates)

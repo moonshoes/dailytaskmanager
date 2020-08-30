@@ -1,4 +1,6 @@
 {% load static %}
+{% load calendars_filters %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -108,14 +110,21 @@
                             </div>
                             <ul>
                                 {% for habit in dailyHabits %}
-                                    <li>
-                                        <div class="form-check">                
-                                            <input class="form-check-input" type="checkbox" value="" id="{{ habit.id }}">
-                                            <label class="form-check-label" for="{{ habit.id }}">
-                                                {{ habit }}
-                                            </label>
-                                        </div>
-                                    </li>
+                                    <button 
+                                        class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:today %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                                        data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
+                                        {% if habit|habitCompletedToday:today %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:today %}</s>{% endif %}
+                                    </button>
+                                    {% comment %} <button 
+                                        class="task-wrapper btn px-1 py-0  btn-sm modal-trigger"
+                                        {% if habit|habitCompletedToday:today %}
+                                            style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                                        {% else %}
+                                            style="color: #fff; background-color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                                        {% endif %}
+                                        data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
+                                        {{ habit }}
+                                    </button> {% endcomment %}
                                 {% empty %}
                                     <i>No habits to complete today!</i>
                                 {% endfor %}

@@ -1,3 +1,5 @@
+{% load calendars_filters %}
+
 <div class="modal-header">
     <h5 class="modal-title" id="baseModalLabel">{{ today }}</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -5,22 +7,33 @@
     </button>
 </div>
 <div class="modal-body">
-    {% if events and tasks %}
-        {% for event in events %}
-            <button 
-                class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
-                data-form-url="{% url 'event-detail' event.pk %}?next={{ next }}">
-                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
-            </button>
-        {% endfor %}
-        {% for task in tasks %}
-            <button 
-                class="task-wrapper day-entry-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                data-form-url="{% url 'task-detail' task.pk %}?next={{ next }}">
-                {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-            </button>
-        {% endfor %}
-    {% else %}
-        <i>Nothing planned!</i>
-    {% endif %}
+    <div>
+        {% if events or tasks %}
+            {% for event in events %}
+                <button 
+                    class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                    data-form-url="{% url 'event-detail' event.pk %}?next={{ next }}">
+                    {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
+                </button>
+            {% endfor %}
+            {% for task in tasks %}
+                <button 
+                    class="task-wrapper day-entry-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    data-form-url="{% url 'task-detail' task.pk %}?next={{ next }}">
+                    {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
+                </button>
+            {% endfor %}
+        {% else %}
+            <i>Nothing planned!</i>
+        {% endif %}
+    </div>
+    <div>
+    {% for habit in habits %}
+        <button 
+            class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:today %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+            data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
+            {% if habit|habitCompletedToday:today %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:today %}</s>{% endif %}
+        </button>
+    {% endfor %}
+    </div>
 </div>

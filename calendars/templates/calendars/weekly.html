@@ -56,6 +56,13 @@ active
                             {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                         </button>
                     {% endfor %}
+                    {% for habit in day.habitList %}
+                        <button 
+                            class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:day.day %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                            data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
+                            {% if habit|habitCompletedToday:day.day %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:day.day %}</s>{% endif %}
+                        </button>
+                    {% endfor %}
                 </div>
             {% endfor %}
         </div>
