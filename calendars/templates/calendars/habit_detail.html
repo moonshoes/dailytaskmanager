@@ -16,8 +16,32 @@
     <div>
         <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
     </div>
+    {% if habit.getRewards %}
+        <div>
+            <span class="font-weight-bolder">List of rewards to unlock:</span>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th># of days</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reward in habit.getRewards %}
+                        <tr>
+                            <td>{{ reward.days }}</td>
+                            <td>{{ reward.description }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
     <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}&habit={{ habit.pk }}">
-        Update
+        Previous days
+    </button>
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'reward-create' %}?next={{ next }}&habit={{ habit.pk }}">
+        Add reward
     </button>
     {% comment %} <small>
         (Wish to add additional dates? 

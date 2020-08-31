@@ -16,8 +16,8 @@ from bootstrap_modal_forms.generic import (
     BSModalFormView
 )
 
-from calendars.models import Task, Event, Habit
-from calendars.forms import TaskForm, EventForm, HabitForm
+from calendars.models import Task, Event, Habit, Reward
+from calendars.forms import TaskForm, EventForm, HabitForm, RewardForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
     getPreviousMonth,
@@ -534,3 +534,21 @@ def habitYearStreak(request, pk, yearArg=-1):
         }
 
         return render(request, 'calendars/habit_year_streak.html', context)
+
+class RewardCreateView(BSModalCreateView):
+    model = Reward
+    form_class = RewardForm
+    success_message = "You've added a new reward!"
+
+    def form_valid(self, form):
+        habit = findHabit(self.request.GET.get('habit'))
+        form.instance.habit = habit
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['habit'] = findHabit(self.request.GET.get('habit'))
+        return context
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')

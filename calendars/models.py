@@ -107,6 +107,7 @@ class Habit(CalendarEntry):
                     array[6] = True
         return array
     
+    # Streak logic
     def getStreaks(self):
         return HabitStreak.objects.filter(habit=self)
     
@@ -135,6 +136,14 @@ class Habit(CalendarEntry):
                 if (streak.frequency == self.frequency()
                     and streak.nextFrequencyDate(streak.endDate) == dateArg):
                     streak.updateEndDate(dateArg)
+                    if self.getRewards:
+                        for reward in self.getRewards:
+                            if reward.getRewardStreak():
+                                rewardStreak = reward.getRewardStreak()
+                                rewardStreak.upCounter()
+                            else:
+                                rewardStreak = RewardStreak.objects.create(reward=reward, startDate=dateArg)
+                                rewardStreak.upCounter()
                     found = True
                     break
             if not found:
@@ -181,6 +190,20 @@ class Habit(CalendarEntry):
             raise TypeError("{} is not a date!".format(dateArg))
         streakFrequency = self.frequency()
         HabitStreak.objects.create(habit=self, startDate=dateArg, endDate=dateArg, frequency=streakFrequency)
+        if self.getRewards:
+            for reward in self.getRewards:
+                if reward.getRewardStreak():
+                    rewardStreak = reward.getRewardStreak()
+                    rewardStreak.upCounter()
+                else:
+                    rewardStreak = RewardStreak.objects.create(reward=reward, startDate=dateArg)
+                    rewardStreak.upCounter()
+    
+    # Reward logic
+    def getRewards(self):
+        return Reward.objects.filter(habit=self)
+
+    
 
 class HabitStreak(models.Model):
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
@@ -189,7 +212,7 @@ class HabitStreak(models.Model):
     frequency = models.CharField(max_length=40)
 
     def __str__(self):
-        return '{} streak: {} until {}'.format('habit', 'startDate', 'endDate')
+        return '{} streak: {} until {}'.format(self.habit, self.startDate, self.endDate)
 
     def updateStartDate(self, newDate):
         if not isinstance(newDate, date):
@@ -287,3 +310,42 @@ class HabitStreak(models.Model):
         
         delta = datetime.timedelta(days=counter)
         return dateArg - delta
+
+class Reward(models.Model):
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
+    description = models.CharField(max_length=200)
+    days = models.IntegerField()
+
+    def __str__(self):
+        return 'Reward for {}'.format(self.habit)
+    
+    def getRewardStreak(self):
+        return RewardStreak.objects.get(reward=self, unlocked=False)
+
+class RewardStreak(models.Model):
+    reward = models.ForeignKey(Reward, on_delete=models.CASCADE)
+    startDate = models.DateField()
+    unlocked = models.BooleanField(default=False)
+    counter = models.IntegerField(default=0)
+
+    def __str__(self):
+        return '{} started on {}'.format(self.reward, self.startDate)
+
+    def startOver(self, dateArg):
+        if not isinstance(dateArg, date):
+            raise TypeError("{} is not a date!".format(dateArg))
+        if dateArg > self.startDate:
+            self.startDate = dateArg
+            self.save()
+    
+    def upCounter(self):
+        self.counter = self.counter + 1
+        if self.counter == self.days:
+            self.unlocked = True
+        self.save()
+    
+    def lowerCounter(self):
+        self.counter = self.counter - 1
+        if self.counter < self.days:
+            self.unlocked = False
+        self.save()

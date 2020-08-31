@@ -15,7 +15,8 @@ from .views import (
     HabitDeleteView,
     HabitCreateView,
     HabitUpdateView,
-    CompleteEarlierDaysHabit
+    CompleteEarlierDaysHabit,
+    RewardCreateView
 )
 from . import views
 
@@ -57,4 +58,5 @@ urlpatterns = [
     path('habit/<int:pk>/toggle-complete/', views.toggleCompleteHabit, name='toggle-complete-habit'),
     path('habit/set-previous-complete/', CompleteEarlierDaysHabit.as_view(), name='complete-previous-habit'),
     path('habit/<int:pk>/year-streak/<int:yearArg>', views.habitYearStreak, name='habit-year-streak'),
+    path('reward/new/', RewardCreateView.as_view(), name='reward-create'),
 ]
