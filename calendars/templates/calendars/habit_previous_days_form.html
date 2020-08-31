@@ -1,9 +1,34 @@
-{% extends 'calendars/baseModalForm.html' %}
+{% extends 'calendars/baseModal.html' %}
+{% load widget_tweaks %}
+
+{% block formBeginning %}
+    <form method="post" action="">
+        {% csrf_token %}
+{% endblock %}
 
 {% block modalTitle %}
     Add previous days to streak
 {% endblock %}
 
-{% block submitButtonText %}
-    Add dates
+{% block modalBody %}
+    <div class="text-danger">Warning: adding previous dates is irreversible. Make sure you add the right dates!</div>
+    {% for field in form %}
+        <div class="form-group {% if field.errors %} invalid {% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" %}
+            {% for error in field.errors %}
+                <p class="help-block text-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block footerButton %}
+    <button type="button" class="submit-btn btn btn-primary">
+        Add dates
+    </button>
+{% endblock %}
+
+{% block formEnd %}
+    </form>
 {% endblock %}

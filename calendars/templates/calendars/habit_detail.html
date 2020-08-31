@@ -16,7 +16,7 @@
     <div>
         <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
     </div>
-    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}?habit={{ habit.pk }}">
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}&habit={{ habit.pk }}">
         Update
     </button>
     {% comment %} <small>

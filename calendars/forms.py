@@ -142,25 +142,27 @@ class PreviousCompletedHabitDaysForm(BSModalForm):
     
     def __init__(self, *args, **kwargs):
         self.disabledDates = kwargs.pop('disabledDays')
+        print(self.disabledDates)
         self.maxDate = kwargs.pop('maxDate')
+        print(self.maxDate)
         super(PreviousCompletedHabitDaysForm, self).__init__(*args, **kwargs)
 
-        widgets = {
-            'dates': DatePicker(
+        self.fields['dates'].widget = DatePicker(
                 options={
                     'format': 'DD/MM/YYYY',
-                    'allowMultiDate': True,
+                    'allowMultidate': True,
                     'multidateSeparator': ',',
-                    'maxDate': self.maxDate,
-                    'disabledDates': self.disabledDates
+                    'daysOfWeekDisabled': self.disabledDates,
+                    # 'maxDate': self.maxDate.isoformat()
+                    # With maxDate set it doesn't disable any days?
                 },
                 attrs={
                     'append': 'fa fa-calendar',
                     'icon-toggle': True,
             })
-        }
 
     def addPreviousDates(self, habit):
-        super.clean()
+        self.clean()
         cleaned_dates = self.cleaned_data.get("dates")
+        print(cleaned_dates)
         habit.completeEarlierDays(cleaned_dates)

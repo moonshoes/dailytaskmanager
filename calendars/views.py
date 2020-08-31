@@ -488,28 +488,22 @@ class CompleteEarlierDaysHabit(BSModalFormView):
     # disabledDays = modelFunctions.getDisabledDaysHabit(habit)
     # today = datetime.date.today()
     form_class = PreviousCompletedHabitDaysForm
-    template_name = 'habit_previous_days_form.html'
+    template_name = 'calendars/habit_previous_days_form.html'
     success_message = "You've successfully added previous completed dates!"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        habit = findHabit(self.request.GET.get('habit'))
-        kwargs['disabledDays'] = modelFunctions.getDisabledDaysHabit(habit)
+        self.habit = findHabit(self.request.GET.get('habit'))
+        kwargs['disabledDays'] = modelFunctions.getDisabledDaysHabit(self.habit)
         kwargs['maxDate'] = datetime.date.today()
         return kwargs
 
-    # def __init__(self, *args, **kwargs):
-    #     super(completeEarlierDaysHabit, self).__init__(*args, **kwargs)
-    #     self.habit = findHabit(self.request.GET.get('habit'))
-    #     self.disabledDays = modelFunctions.getDisabledDaysHabit(habit)
-    #     self.today = datetime.date.today()
-
-
     def form_valid(self, form):
-        form.addPreviousDates(habit)
+        form.addPreviousDates(self.habit)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        return self.request.GET.get('next', '/')
+       return self.request.GET.get('next', '/')
 
 def habitYearStreak(request, pk, yearArg=-1):
     try:

@@ -116,7 +116,7 @@
                                         {% if habit|habitCompletedToday:today %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:today %}</s>{% endif %}
                                     </button>
                                     {% comment %} <button 
-                                        class="task-wrapper btn px-1 py-0  btn-sm modal-trigger"
+                                        class="task-wrapper btn px-1 py-0  btn-sm modal-trigger habit-wrapper"
                                         {% if habit|habitCompletedToday:today %}
                                             style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
                                         {% else %}

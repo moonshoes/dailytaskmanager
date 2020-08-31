@@ -141,10 +141,14 @@ class Habit(CalendarEntry):
                 self.makeNewStreak(dateArg)
 
     def completeEarlierDays(self, dateArr):
-        for dateArg in dateArr:
+        for dateArg in dateArr.split(','):
+            dateParam = dateArg.split('/')
+            dateArg = datetime.date(int(dateParam[2]),
+                int(dateParam[1]),
+                int(dateParam[0]))
             if not isinstance(dateArg, date):
                 raise TypeError("{} is not a date!".format(dateArg))
-            if not self.CompletedToday(dateArg):
+            if not self.completedToday(dateArg) and dateArg <= datetime.date.today():
                 found = False
                 # Booleans to see if either the end or the start has been updated
                 # In most cases these won't be true at the same time, unless a streak is being merged together
@@ -164,10 +168,10 @@ class Habit(CalendarEntry):
                             updatedStart = True
                 if not found:
                     self.makeNewStreak(dateArg)
-                elif start and end:
+                elif updatedStart and updatedEnd:
                     # Two streaks can be merged together
-                    earlierStreak = HabitStreaks.objects.get(endDate=dateArg)
-                    laterStreak = HabitStreaks.objects.get(startDate=dateArg)
+                    earlierStreak = HabitStreak.objects.get(endDate=dateArg)
+                    laterStreak = HabitStreak.objects.get(startDate=dateArg)
                     if earlierStreak.frequency == laterStreak.frequency:
                         earlierStreak.updateEndDate(laterStreak.endDate)
                         laterStreak.delete()

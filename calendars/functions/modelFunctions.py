@@ -103,7 +103,10 @@ def getDisabledDaysHabit(habit):
     disabledDays = []
     for iteration, day in enumerate(frequencyArray):
         if not day:
-            disabledDays.append(iteration)
+            if iteration == 6:
+                disabledDays.append(0)
+            else:
+                disabledDays.append(iteration + 1)
     return disabledDays
 
 def getYearStreak(habit, year):
