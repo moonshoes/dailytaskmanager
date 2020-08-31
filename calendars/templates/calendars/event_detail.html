@@ -2,7 +2,7 @@
 {% load calendars_filters %}
 
 {% block modalTitle %}
-    {{ event.name }} {% if now|currentlyHappening:event.startDate %}- Currently happening!{% endif %}
+    {{ event.name }} {% if event|currentlyHappening:now %}- Currently happening!{% endif %}
 {% endblock %}
 
 {% block modalBody %}

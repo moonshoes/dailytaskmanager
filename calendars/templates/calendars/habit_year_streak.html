@@ -1,0 +1,47 @@
+{% extends "calendars/base.html" %}
+
+{% block calendarNavigation %}
+<div class="nav-item navbar-text mr-4">
+    <a href="{% url 'habit-year-streak' habit.pk prevYear %}" class="text-decoration-none">
+        <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-caret-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10 12.796L4.519 8 10 3.204v9.592zm-.659.753l-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+        </svg>
+    </a>
+    {{ year }}
+    <a href="{% url 'habit-year-streak' habit.pk nextYear %}" class="text-decoration-none">
+        <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-caret-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M6 12.796L11.481 8 6 3.204v9.592zm.659.753l5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+        </svg>
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-9 bg-main mx-3">
+    <div class="row h-100 row-cols-4">
+        {% for month in yearList %}
+            <div class="col">
+                <div class="row pr-3 py-1 text-right">
+                    <div class="col">
+                        {{ month.monthname }}
+                    </div>
+                </div>
+                <div class="row no-gutters row-cols-7 text-center">
+                    {% for day in month.month %}
+                        <div class="col border rounded modal-trigger
+                                {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
+                                    text-muted
+                                {% endif %}"
+                            {% if day in yearStreak %}
+                            style="background-color: {{ habit.iconColor }}; color: white;"
+                            {% endif %}
+                            data-form-url="{% url 'day-detail' day|date:"Y" day|date:"n" day|date:"j" %}?next={{ request.path }}">
+                            {{ day|date:"j" }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

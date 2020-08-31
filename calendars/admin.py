@@ -4,3 +4,4 @@ from . import models
 admin.site.register(models.Task)
 admin.site.register(models.Event)
 admin.site.register(models.Habit)
+admin.site.register(models.HabitStreak)

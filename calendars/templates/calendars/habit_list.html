@@ -26,6 +26,9 @@
                         <button type="button" class="modal-trigger btn btn-outline-primary btn-sm" data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
                             Detail
                         </button>
+                        <a type="button" class="btn btn-outline-primary btn-sm" href="{% url 'habit-year-streak' habit.pk currentYear %}">
+                            Streak overview
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

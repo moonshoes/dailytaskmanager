@@ -8,7 +8,7 @@
             <path fill-rule="evenodd" d="M10 12.796L4.519 8 10 3.204v9.592zm-.659.753l-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
         </svg>
     </a>
-    {{ today }}
+    {{ currentDay }}
     <a href="{% url 'calendars-day' nextDay.year nextDay.month nextDay.day %}" class="text-decoration-none">
         <svg width="1.3em" height="1.3em" viewBox="0 0 16 16" class="bi bi-caret-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M6 12.796L11.481 8 6 3.204v9.592zm.659.753l5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
@@ -26,7 +26,7 @@ active
     <div class="sticky-top px-3">
         <div class="row bg-main task-bar">
             <div class="col text-center small">
-                {{ today }}
+                {{ currentDay }}
             </div>
         </div>
         <div class="row task-bar bg-main">
@@ -44,6 +44,13 @@ active
                     {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                 </button>
             {% endfor %}
+            {% for habit in dayHabits %}
+                <button 
+                    class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:currentDay %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
+                    {% if habit|habitCompletedToday:currentDay %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:currentDay %}</s>{% endif %}
+                </button>
+            {% endfor %}
         </div>
     </div>
     <div class="day-grid h-300">
@@ -52,7 +59,7 @@ active
                 <div class="small">{{ x|hour }}</div>
                 <div class="p-1">
                 {% for event in dailyEvents.misc %}
-                    {% if event.startDate|isToday:today and event.endDate|isToday:today %}
+                    {% if event.startDate|isToday:currentDay and event.endDate|isToday:currentDay %}
                         {% if event.startDate|compareStartDateHour:x and event.endDate|compareEndDateHour:x %}
                             <button 
                                 class="task-wrapper btn btn-primary btn-sm modal-trigger" 
@@ -60,7 +67,7 @@ active
                                 {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
                             </button>
                         {% endif %}
-                    {% elif event.endDate|isToday:today %}
+                    {% elif event.endDate|isToday:currentDay %}
                         {% if event.endDate|compareEndDateHour:x %}
                             <button 
                                 class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
@@ -68,7 +75,7 @@ active
                                 {{ event }}: {{ event.startDate|date:"j M, P" }} - {{ event.endDate|date:"P" }}
                             </button>
                         {% endif %}
-                    {% elif event.startDate|isToday:today %}
+                    {% elif event.startDate|isToday:currentDay %}
                         {% if event.startDate|compareStartDateHour:x %}
                             <button 
                                 class="task-wrapper px-1 py-0 btn btn-primary btn-sm modal-trigger" 
