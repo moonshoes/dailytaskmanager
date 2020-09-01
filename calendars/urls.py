@@ -15,7 +15,11 @@ from .views import (
     HabitDeleteView,
     HabitCreateView,
     HabitUpdateView,
-    CompleteEarlierDaysHabit
+    CompleteEarlierDaysHabit,
+    RewardCreateView,
+    UnlockedRewardListView,
+    UnlockedRewardDeleteView,
+    RewardDeleteView
 )
 from . import views
 
@@ -57,4 +61,10 @@ urlpatterns = [
     path('habit/<int:pk>/toggle-complete/', views.toggleCompleteHabit, name='toggle-complete-habit'),
     path('habit/set-previous-complete/', CompleteEarlierDaysHabit.as_view(), name='complete-previous-habit'),
     path('habit/<int:pk>/year-streak/<int:yearArg>', views.habitYearStreak, name='habit-year-streak'),
+    path('reward/new/', RewardCreateView.as_view(), name='reward-create'),
+    path('unlocked-rewards/', UnlockedRewardListView.as_view(), name='list-unlocked-rewards'),
+    path('reward/unlocked/<int:pk>/delete/', UnlockedRewardDeleteView.as_view(), name='unlocked-reward-delete'),
+    path('reward/<int:pk>/delete/', RewardDeleteView.as_view(), name='reward-delete'),
+    
+    
 ]

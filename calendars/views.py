@@ -16,8 +16,8 @@ from bootstrap_modal_forms.generic import (
     BSModalFormView
 )
 
-from calendars.models import Task, Event, Habit
-from calendars.forms import TaskForm, EventForm, HabitForm
+from calendars.models import Task, Event, Habit, Reward, RewardStreak
+from calendars.forms import TaskForm, EventForm, HabitForm, RewardForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
     getPreviousMonth,
@@ -534,3 +534,62 @@ def habitYearStreak(request, pk, yearArg=-1):
         }
 
         return render(request, 'calendars/habit_year_streak.html', context)
+
+class RewardCreateView(BSModalCreateView):
+    model = Reward
+    form_class = RewardForm
+    success_message = "You've added a new reward!"
+
+    def form_valid(self, form):
+        habit = findHabit(self.request.GET.get('habit'))
+        form.instance.habit = habit
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['habit'] = findHabit(self.request.GET.get('habit'))
+        return context
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class UnlockedRewardListView(LoginRequiredMixin, ListView):
+    model = RewardStreak
+    context_object_name = 'rewards'
+    template_name = 'calendars/unlocked_rewards.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        habits = Habit.objects.filter(creator=user)
+        rewards = []
+        for habit in habits:
+            for reward in list(habit.getRewards()):
+                rewards.append(reward)
+        return RewardStreak.objects.filter(reward__in=rewards, unlocked=True).order_by('unlockDate')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        today = datetime.date.today()
+        user = self.request.user
+
+        context['dailyTasks'] = modelFunctions.getDailyTasks(today, user)
+        context['dailyHabits'] = modelFunctions.getDailyHabits(today, user)
+        context['today'] = today
+        return context
+
+class UnlockedRewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = RewardStreak
+    success_message = "Your reward has been completed!"
+    template_name = 'calendars/confirm_reward_done.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class RewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = Reward
+    success_message = "Your reward has been deleted!"
+    template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')

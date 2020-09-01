@@ -16,8 +16,65 @@
     <div>
         <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
     </div>
+    {% if habit.getRewards %}
+        <div>
+            <span class="font-weight-bolder">List of rewards to unlock:</span>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th># of days</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reward in habit.getRewards %}
+                        <tr>
+                            <td>{{ reward.days }}</td>
+                            <td>{{ reward.description }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger in-modal-trigger" data-form-url="{% url 'reward-delete' reward.pk %}?next={{ next }}">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <span class="font-weight-bolder">List of unlocked rewards:</span>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Unlocked on</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reward in habit.getRewards %}
+                        {% for unlocked in reward.getUnlockedRewards %}
+                            <tr>
+                                <td>{{ unlocked.unlockDate }}</td>
+                                <td>{{ unlocked.reward.description }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-primary in-modal-trigger" data-form-url="{% url 'unlocked-reward-delete' unlocked.pk %}?next={{ next }}">
+                                        Reward done
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
     <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}&habit={{ habit.pk }}">
-        Update
+        Previous days
+    </button>
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'reward-create' %}?next={{ next }}&habit={{ habit.pk }}">
+        Add reward
     </button>
     {% comment %} <small>
         (Wish to add additional dates? 

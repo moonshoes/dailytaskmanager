@@ -1,6 +1,6 @@
 from django import forms
 import datetime
-from calendars.models import Task, Event, Habit
+from calendars.models import Task, Event, Habit, Reward
 from bootstrap_modal_forms.forms import BSModalModelForm, BSModalForm
 from tempus_dominus.widgets import DatePicker, DateTimePicker
 
@@ -166,3 +166,14 @@ class PreviousCompletedHabitDaysForm(BSModalForm):
         cleaned_dates = self.cleaned_data.get("dates")
         print(cleaned_dates)
         habit.completeEarlierDays(cleaned_dates)
+
+class RewardForm(BSModalModelForm):
+    class Meta:
+        model = Reward
+        fields = ['days', 'description']
+        labels = {
+            'days': 'Unlock reward after this many consecutive days'
+        }
+        widgets = {
+            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2})
+        }
