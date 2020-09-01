@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block modalBody %}
-    <div class="text-danger">Warning: adding previous dates is irreversible. Make sure you add the right dates!</div>
+    <div class="text-danger">Warning: adding previous dates is irreversible. Make sure you add the right dates! Adding previous dates does not help in unlocking old rewards.</div>
     {% for field in form %}
         <div class="form-group {% if field.errors %} invalid {% endif %}">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>

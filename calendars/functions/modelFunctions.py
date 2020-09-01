@@ -1,4 +1,4 @@
-from calendars.models import Task, Habit, Event
+from calendars.models import Task, Habit, Event, RewardStreak
 from django.db.models import Q
 
 #Tasks

@@ -10,7 +10,11 @@
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
                 <th scope="col">Frequency</th>
-                <th scope="col"></th>
+                <th scope="col">
+                    <a type="button" class="btn btn-primary btn-sm" href="{% url 'list-unlocked-rewards' %}">
+                        See all unlocked rewards
+                    </a>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -19,9 +23,7 @@
                     <td><div style="background-color: {{ habit.iconColor }}" class="habitIcon"></div></td>
                     <td>{{ habit.name }} </td>
                     <td>{{ habit.description }}</td>
-                    <td>
-                        {{ habit.frequency }}
-                    </td>
+                    <td>{{ habit.frequency }}</td>
                     <td>
                         <button type="button" class="modal-trigger btn btn-outline-primary btn-sm" data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
                             Detail
