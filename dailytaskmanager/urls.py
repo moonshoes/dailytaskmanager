@@ -23,7 +23,9 @@ urlpatterns = [
     path('register/', users_views.RegistrationView.as_view(), name='register'),
     path('login/', users_views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('password_change/', users_views.CustomPasswordChangeView.as_view(), name='password-change'),
     path('user/<int:pk>/', users_views.UserDetailView.as_view(), name='user-detail'),
     path('user/<int:pk>/update', users_views.UserUpdateView.as_view(), name='user-update'),
+    path('settings/<int:pk>/update', users_views.UserSettingsUpdateView.as_view(), name='settings-update'),
     path('', include('calendars.urls')),
 ]

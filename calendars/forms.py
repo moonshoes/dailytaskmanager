@@ -85,16 +85,10 @@ class HabitForm(BSModalModelForm):
         model = Habit
         fields = ('name', 'description', 'iconColor')
         labels = {
-            'iconColor': 'Icon'
+            'iconColor': 'Display color'
         }
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
-            'iconColor': forms.RadioSelect(
-                choices=[
-                    ('#ff0000', 'red'), #red
-                    ('#00cc00', 'green'), #green
-                    ('#0066ff', 'blue'), #blue
-                    ('#ffff00', 'yellow')]) #yellow
+            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2})
         }
 
     def __init__(self, *args, **kwargs):

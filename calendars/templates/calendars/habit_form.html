@@ -14,20 +14,8 @@
     {% for field in form %}
         {% if field == form.iconColor %}
             <div class="form-group {% if field.errors %} invalid {% endif %}">
-                <label class="radio-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% for radio in field %}
-                    <div class="form-check-inline icon-radio">
-                        <span style="form-check-input">{{ radio.tag }}</span>
-                        <label 
-                            {% comment %} style="border: 2px solid {{ radio.choice_label }}" {% endcomment %}
-                            {% comment %} onmouseover="this.style.backgroundColor='{{ radio.choice_label }}'"
-                            onmouseout="this.style.backgroundColor=''" {% endcomment %}
-                            class="form-check-label" 
-                            for="{{ radio.id_for_label }}">
-                            {{ radio.choice_label }}
-                        </label>
-                    </div>
-                {% endfor %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% render_field field class="form-control" type="color" %}
                 {% for error in field.errors %}
                     <p class="help-block text-danger">{{ error }}</p>
                 {% endfor %}

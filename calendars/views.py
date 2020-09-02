@@ -17,6 +17,7 @@ from bootstrap_modal_forms.generic import (
 )
 
 from calendars.models import Task, Event, Habit, Reward, RewardStreak
+from users.models import UserSettings
 from calendars.forms import TaskForm, EventForm, HabitForm, RewardForm
 from calendars.functions.calendarFunctions import (
     getPreviousDay,
@@ -43,11 +44,25 @@ import calendars.functions.modelFunctions as modelFunctions
 from .forms import PreviousCompletedHabitDaysForm
 
 def home(request):
-    return redirect('calendars-month')
+    if not request.user.is_anonymous:
+        landing = request.user.usersettings.landingPage
+        if landing == "year":
+            return redirect('calendars-year')
+        elif landing == "month":
+            return redirect('calendars-month')
+        elif landing == "week":
+            return redirect('calendars-week')
+        elif landing == "day":
+            return redirect('calendars-day')
+    else:
+        return redirect('calendars-month')
 
 def monthly(request, yearArg=-1, monthArg=-1):
     try:
-        cal = calendar.Calendar(0) #0 is the default!
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         today = datetime.date.today()
         if yearArg == -1 and monthArg == -1:
             year = today.year
@@ -83,7 +98,10 @@ def monthly(request, yearArg=-1, monthArg=-1):
 
 def yearly(request, yearArg=-1):
     try:
-        cal = calendar.Calendar(0)
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         today = datetime.date.today()
         if yearArg == -1:
             year = today.year
@@ -141,7 +159,10 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
 
 def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
     try:
-        cal = calendar.Calendar(0)
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         if yearArg == -1 and monthArg == -1 and dayArg == -1:
             today = datetime.date.today()
         else:

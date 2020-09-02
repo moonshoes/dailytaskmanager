@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LogoutView
+from .models import UserSettings
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from bootstrap_modal_forms.generic import (
@@ -9,10 +10,14 @@ from bootstrap_modal_forms.generic import (
     BSModalReadView,
     BSModalUpdateView
 )
+from bootstrap_modal_forms.mixins import PassRequestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from users.forms import (
     CustomRegistrationForm, 
     CustomAuthenticationForm,
-    UserUpdateForm
+    UserUpdateForm,
+    CustomPasswordChangeForm,
+    UserSettingsForm
 )
 
 class RegistrationView(BSModalCreateView):
@@ -47,5 +52,28 @@ class UserUpdateView(LoginRequiredMixin, BSModalUpdateView):
     form_class = UserUpdateForm
     success_message = "Your user information has been updated!"
 
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class CustomPasswordChangeView(LoginRequiredMixin, PassRequestMixin, SuccessMessageMixin, PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance_user'] = self.request.user
+        return kwargs
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class UserSettingsUpdateView(BSModalUpdateView):
+    model = UserSettings
+    form_class = UserSettingsForm
+    success_message = "Your settings have been saved!"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
     def get_success_url(self):
         return self.request.GET.get('next', '/')

@@ -17,6 +17,12 @@
     <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'user-update' user.pk %}?next={{ next }}">
         Update information
     </button>
+    {% comment %} <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'password-change' %}?next={{ next }}">
+        Change password
+    </button> {% endcomment %}
+    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'settings-update' user.usersettings.pk %}?next={{ next }}">
+        Change settings
+    </button>
     {% comment %} <button type="button" id="delete-task" class="btn btn-danger" data-form-url="{% url 'task-delete' task.pk %}?next={{ next }}">
         Delete
     </button> {% endcomment %}
