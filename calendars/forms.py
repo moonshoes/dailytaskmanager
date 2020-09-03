@@ -70,6 +70,9 @@ class HabitForm(BSModalModelForm):
     personalisedFrequency = forms.CharField(
         required=False,
         widget=forms.CheckboxSelectMultiple(
+            attrs={
+                'class': 'form-check-input',
+            },
             choices=[
                 ('monday', 'M'),
                 ('tuesday', 'Tu'),

@@ -26,7 +26,7 @@
                 {% for radio in field %}
                     <div class="form-check-inline">
                         <span style="form-check-input">{{ radio.tag }}</span>
-                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                        <label class="form-check-label ml-1" for="{{ radio.id_for_label }}">
                              {{ radio.choice_label }}
                         </label>
                     </div>
@@ -38,11 +38,13 @@
         {% elif field == form.personalisedFrequency %}
             <div id="personalised" class="form-group {% if field.errors %} invalid {% endif %}">
                 {% for radio in field %}
-                    <div class="form-check-inline">
-                        <span style="form-check-input">{{ radio.tag }}</span>
-                        <label class="form-check-label" for="{{ radio.id_for_label }}">
-                            {{ radio.choice_label }}
-                        </label>
+                    <div class="form-check-inline radio-frequency">
+                        {{ radio.tag }}
+                        <div class="checkmark">
+                            <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
                     </div>
                 {% endfor %}
                 {% for error in field.errors %}
@@ -59,6 +61,25 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var $frequency = $("input[type=radio][name=frequencyChoice]");
+
+            if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $("#personalised").css('visibility', 'visible');
+                }
+
+            $(document).on("click", $frequency, function() {
+                if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $("#personalised").css('visibility', 'visible');
+                } else {
+                    $("#personalised").css('visibility', 'hidden');
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
 
 {% block footerButton %}
