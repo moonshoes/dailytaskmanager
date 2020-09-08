@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from datetime import date
 import datetime
@@ -107,9 +108,24 @@ class Habit(CalendarEntry):
                     array[6] = True
         return array
     
+    def isInFrequency(self, dateArg):
+        if not isinstance(dateArg, date):
+            raise TypeError("{} is not a date!".format(dateArg))
+        frequencyArray = self.frequencyToArray()
+        weekDay = dateArg.weekday()
+        return frequencyArray[weekDay]
+    
     # Streak logic
     def getStreaks(self):
         return HabitStreak.objects.filter(habit=self)
+    
+    def getYearStreaks(self, year):
+        return HabitStreak.objects.filter(
+            Q(habit=self),
+            Q(startDate__year=year) |
+            Q(endDate__year=year)
+        )
+
     
     def completedToday(self, dateArg):
         if not isinstance(dateArg, date):
@@ -146,11 +162,15 @@ class Habit(CalendarEntry):
     def completeEarlierDays(self, dateArr):
         for dateArg in dateArr.split(','):
             dateParam = dateArg.split('/')
+            if len(dateParam) != 3:
+                raise IndexError("{} is not a valid date!".format(dateArg))
+            if (not dateParam[0].isdigit() and
+                not dateParam[1].isdigit() and
+                not dateParam[2].isdigit()):
+                raise ValueError("{} is not a valid date!".format(dateArg))
             dateArg = datetime.date(int(dateParam[2]),
                 int(dateParam[1]),
                 int(dateParam[0]))
-            if not isinstance(dateArg, date):
-                raise TypeError("{} is not a date!".format(dateArg))
             if not self.completedToday(dateArg) and dateArg <= datetime.date.today():
                 found = False
                 # Booleans to see if either the end or the start has been updated
@@ -174,8 +194,8 @@ class Habit(CalendarEntry):
                     self.makeNewStreak(dateArg)
                 elif updatedStart and updatedEnd:
                     # Two streaks can be merged together
-                    earlierStreak = HabitStreak.objects.get(endDate=dateArg)
-                    laterStreak = HabitStreak.objects.get(startDate=dateArg)
+                    earlierStreak = HabitStreak.objects.get(habit=self, endDate=dateArg)
+                    laterStreak = HabitStreak.objects.get(habit=self, startDate=dateArg)
                     if earlierStreak.frequency == laterStreak.frequency:
                         earlierStreak.updateEndDate(laterStreak.endDate)
                         laterStreak.delete()
@@ -192,6 +212,8 @@ class Habit(CalendarEntry):
         return Reward.objects.filter(habit=self)
     
     def startRewardOver(self, dateArg):
+        if not isinstance(dateArg, date):
+            raise TypeError("{} is not a date!".format(dateArg))
         if self.getRewards():
             for reward in self.getRewards():
                 if reward.openRewardStreakExists():
@@ -203,6 +225,8 @@ class Habit(CalendarEntry):
                     rewardStreak.upCounter()
 
     def upRewardCounter(self, dateArg):
+        if not isinstance(dateArg, date):
+            raise TypeError("{} is not a date!".format(dateArg))
         if self.getRewards():
             for reward in self.getRewards():
                 if reward.openRewardStreakExists():
@@ -213,6 +237,8 @@ class Habit(CalendarEntry):
                     rewardStreak.upCounter()
 
     def lowerRewardCounter(self, dateArg):
+        if not isinstance(dateArg, date):
+            raise TypeError("{} is not a date!".format(dateArg))
         if self.getRewards():
             for reward in self.getRewards():
                 if reward.openRewardStreakExists():
@@ -236,14 +262,16 @@ class HabitStreak(models.Model):
     def updateStartDate(self, newDate):
         if not isinstance(newDate, date):
             raise TypeError("{} is not a date!".format(newDate))
-        self.startDate = newDate
-        self.save()
+        if self.isInFrequency(newDate) and self.endDate >= newDate:
+            self.startDate = newDate
+            self.save()
 
     def updateEndDate(self, newDate):
         if not isinstance(newDate, date):
             raise TypeError("{} is not a date!".format(newDate))
-        self.endDate = newDate
-        self.save()
+        if self.isInFrequency(newDate) and newDate >= self.startDate:
+            self.endDate = newDate
+            self.save()
     
     def isDateInStreak(self, dateArg):
         if not isinstance(dateArg, date):
@@ -368,17 +396,19 @@ class RewardStreak(models.Model):
     def startOver(self, dateArg):
         if not isinstance(dateArg, date):
             raise TypeError("{} is not a date!".format(dateArg))
-        if dateArg >= self.startDate:
+        if (dateArg >= self.startDate and 
+            self.reward.habit.isInFrequency(dateArg)):
             self.startDate = dateArg
             self.counter = 0
             self.save()
     
     def upCounter(self):
-        self.counter = self.counter + 1
-        if self.counter == self.reward.days:
-            self.unlocked = True
-            self.unlockDate = datetime.date.today()
-        self.save()
+        if not self.unlocked:
+            self.counter = self.counter + 1
+            if self.counter == self.reward.days:
+                self.unlocked = True
+                self.unlockDate = datetime.date.today()
+            self.save()
     
     def lowerCounter(self):
         if self.counter != 0:

@@ -161,8 +161,10 @@ class PreviousCompletedHabitDaysForm(BSModalForm):
     def addPreviousDates(self, habit):
         self.clean()
         cleaned_dates = self.cleaned_data.get("dates")
-        print(cleaned_dates)
-        habit.completeEarlierDays(cleaned_dates)
+        try:
+            habit.completeEarlierDays(cleaned_dates)
+        except (IndexError, ValueError, TypeError) as error:
+            self.add_error('dates', error)
 
 class RewardForm(BSModalModelForm):
     class Meta:

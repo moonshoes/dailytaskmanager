@@ -1,14 +1,17 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
 from .models import UserSettings
-from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from bootstrap_modal_forms.generic import (
     BSModalCreateView, 
     BSModalLoginView,
     BSModalReadView,
-    BSModalUpdateView
+    BSModalUpdateView,
+    BSModalDeleteView
 )
 from bootstrap_modal_forms.mixins import PassRequestMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -57,14 +60,26 @@ class UserUpdateView(LoginRequiredMixin, BSModalUpdateView):
 
 class CustomPasswordChangeView(LoginRequiredMixin, PassRequestMixin, SuccessMessageMixin, PasswordChangeView):
     form_class = CustomPasswordChangeForm
+    template_name = 'users/password_change_form.html'
+    success_message = 'Your password has been changed! Please log in again with your new password.'
+    success_url = reverse_lazy('calendars-home')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['instance_user'] = self.request.user
+        kwargs['user'] = self.request.user
         return kwargs
-    
-    def get_success_url(self):
-        return self.request.GET.get('next', '/')
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.user, request.POST)
+        if form.is_valid:
+            user = form.save()
+            update_session_auth_hash(request, user)
+
+    # def get_success_url(self):
+    #     return self.request.GET.get('next', '/')
+
+# class CustomPasswordChangeDoneView(PassRequestMixin, SuccessMessageMixin, PasswordChangeDoneView):
+#     return redirect('calendars-home')
 
 class UserSettingsUpdateView(BSModalUpdateView):
     model = UserSettings
@@ -77,3 +92,9 @@ class UserSettingsUpdateView(BSModalUpdateView):
     
     def get_success_url(self):
         return self.request.GET.get('next', '/')
+
+class UserDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = User
+    success_message = "Thank you for using DailyTaskManager! We're sad to see you go :("
+    template_name = 'users/confirm_account_deletion.html'
+    success_url = reverse_lazy('calendars-home')

@@ -7,3 +7,7 @@ from .models import UserSettings
 def create_settings(sender, instance, created, **kwargs):
     if created:
         UserSettings.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_settings(sender, instance, **kwargs):
+    instance.usersettings.save()

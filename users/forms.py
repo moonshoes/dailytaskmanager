@@ -24,7 +24,12 @@ class UserUpdateForm(BSModalModelForm):
         fields = ['username', 'first_name', 'last_name','email']
 
 class CustomPasswordChangeForm(PopRequestMixin, CreateUpdateAjaxMixin, PasswordChangeForm):
-    pass
+    def save(self, commit=True):
+        password = self.cleaned_data['new_password1']
+        self.user.set_password(password)
+        if commit:
+            self.user.save()
+        return self.user
 
 class UserSettingsForm(BSModalModelForm):
     class Meta:
