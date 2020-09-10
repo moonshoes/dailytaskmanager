@@ -1,6 +1,20 @@
 {% extends 'calendars/baseModal.html' %}
 {% load calendars_filters %}
 
+{% block iconButtons %}
+    <button type="button" class="icon-button in-modal-trigger" data-form-url="{% url 'habit-update' habit.pk %}?next={{ next }}">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+        </svg>
+    </button>
+    <button type="button" class="icon-button in-modal-trigger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+    </button>
+{% endblock %}
+
 {% block modalTitle %}
    <div style="background-color: {{ habit.iconColor }}" class="habitIcon"></div> 
    {{ habit.name }}{% if habit|habitCompletedToday:today %} - Done today!{% endif %}
@@ -17,86 +31,95 @@
         <span class="font-weight-bolder">Frequency:</span> {{ habit.frequency }}
     </div>
     {% if habit.getRewards %}
-        <div>
-            <span class="font-weight-bolder">List of rewards to unlock:</span>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th># of days</th>
-                        <th>Description</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reward in habit.getRewards %}
-                        <tr>
-                            <td>{{ reward.days }}</td>
-                            <td>{{ reward.description }}</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-danger in-modal-trigger" data-form-url="{% url 'reward-delete' reward.pk %}?next={{ next }}">
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="h5 border-bottom pb-2 pt-3">
+            Rewards
+            <button type="button" class="icon-button see-more" data-toggle="collapse" data-target="#reward-collapse" aria-expanded="false" aria-controls="reward-collapse">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+            </button>
         </div>
-        <div>
-            <span class="font-weight-bolder">List of unlocked rewards:</span>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Unlocked on</th>
-                        <th>Description</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reward in habit.getRewards %}
-                        {% for unlocked in reward.getUnlockedRewards %}
+        <div class="collapse" id="reward-collapse">
+            <div>
+                <span class="font-weight-bolder">List of rewards to unlock:</span>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th># of days</th>
+                            <th>Description</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reward in habit.getRewards %}
                             <tr>
-                                <td>{{ unlocked.unlockDate }}</td>
-                                <td>{{ unlocked.reward.description }}</td>
+                                <td>{{ reward.days }}</td>
+                                <td>{{ reward.description }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary in-modal-trigger" data-form-url="{% url 'unlocked-reward-delete' unlocked.pk %}?next={{ next }}">
-                                        Reward done
+                                    <button type="button" class="icon-button in-modal-trigger" data-form-url="{% url 'reward-update' reward.pk %}?next={{ next }}&habit={{ habit.pk }}">
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="icon-button in-modal-trigger" data-form-url="{% url 'reward-delete' reward.pk %}?next={{ next }}">
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
                                     </button>
                                 </td>
                             </tr>
                         {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <span class="font-weight-bolder">List of unlocked rewards:</span>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Unlocked on</th>
+                            <th>Description</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reward in habit.getRewards %}
+                            {% for unlocked in reward.getUnlockedRewards %}
+                                <tr>
+                                    <td>{{ unlocked.unlockDate }}</td>
+                                    <td>{{ unlocked.reward.description }}</td>
+                                    <td>
+                                        <button type="button" class="icon-button in-modal-trigger" data-form-url="{% url 'unlocked-reward-delete' unlocked.pk %}?next={{ next }}">
+                                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     {% endif %}
-    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}&habit={{ habit.pk }}">
-        Previous days
-    </button>
-    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'reward-create' %}?next={{ next }}&habit={{ habit.pk }}">
-        Add reward
-    </button>
-    {% comment %} <small>
-        (Wish to add additional dates? 
-            <a class="in-modal-trigger" href="#" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}?habit={{ habit.pk }}">
-                Click here.
-            </a>
-        )
-    </small> {% endcomment %}
 {% endblock %}
 
 {% block footerButton %}
-    <button type="button" class="btn btn-success in-modal-trigger" data-form-url="{% url 'habit-update' habit.pk %}?next={{ next }}">
-        Update
+    <button type="button" class="btn btn-sm btn-success in-modal-trigger" data-form-url="{% url 'complete-previous-habit' %}?next={{ next }}&habit={{ habit.pk }}">
+        Complete previous days
     </button>
-    <button type="button" class="btn btn-danger in-modal-trigger" data-form-url="{% url 'habit-delete' habit.pk %}?next={{ next }}">
-        Delete
+    <button type="button" class="btn btn-sm btn-success in-modal-trigger" data-form-url="{% url 'reward-create' %}?next={{ next }}&habit={{ habit.pk }}">
+        Add reward
     </button>
 {% endblock %}
 
 {% block additionalFooterButton %}
     {% if habit|canBeCompletedToday:today %}
-        <a role="button" class="btn btn-primary" href="{% url 'toggle-complete-habit' habit.pk %}?next={{ next }}">
+        <a role="button" class="btn btn-sm btn-primary" href="{% url 'toggle-complete-habit' habit.pk %}?next={{ next }}">
             {% if habit|habitCompletedToday:today %}
                 Not done? Set to incomplete
             {% else %}
@@ -104,4 +127,13 @@
             {% endif %}
         </a>
     {% endif %}
+
+    <script type="text/javascript">
+        $(".in-modal-trigger").each(function () {
+                $(this).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+    </script>
 {% endblock %}

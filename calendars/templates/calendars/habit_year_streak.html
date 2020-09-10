@@ -32,8 +32,10 @@
                                 {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
                                     text-muted
                                 {% endif %}"
-                            {% if day in yearStreak %}
-                            style="background-color: {{ habit.iconColor }}; color: white;"
+                            {% if not forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
+                                {% if day in yearStreak %}
+                                style="background-color: {{ habit.iconColor }}; color: white;"
+                                {% endif %}
                             {% endif %}
                             data-form-url="{% url 'day-detail' day|date:"Y" day|date:"n" day|date:"j" %}?next={{ request.path }}">
                             {{ day|date:"j" }}

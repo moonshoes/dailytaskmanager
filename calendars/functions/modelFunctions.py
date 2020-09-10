@@ -1,18 +1,14 @@
 from calendars.models import Task, Habit, Event, RewardStreak
 from django.db.models import Q
+from datetime import date
+from django.contrib.auth.models import User
 
-#Tasks
+# Tasks
 def getDailyTasks(day, user):
     return Task.objects.filter(
                 creator=user,
                 date=day,
             )
-
-def getWeeklyTasks(week, user):
-    taskList = []
-    for day in week.get('weekDaysList'):
-        taskList.append(getDailyTasks(day, user))
-    return taskList
 
 def findTask(pk):
     return Task.objects.get(pk=pk)
@@ -21,7 +17,7 @@ def toggleCompleteTask(task):
     task.toggleCompleted()
 
 
-#Events
+# Events
 def getDailyEvents(day, user):
     events = {
         'allDay': Event.objects.filter(
@@ -37,7 +33,14 @@ def getDailyEvents(day, user):
     }
     return events
 
-#Entries (Events, Tasks and Habits)
+def getDayEvents(day, user):
+    return Event.objects.filter(
+                    startDate__date__lte=day,
+                    endDate__date__gte=day,
+                    creator=user
+                )
+
+# Entries (Events, Tasks and Habits)
 def getMonthlyEntries(month, user):
     dayEntryList = []
     for day in month:
@@ -69,9 +72,12 @@ def getWeeklyEntries(week, user):
     week.update({'weekDaysList': dayEntryList})
     return week
 
-#Habits
+# Habits
 def getDailyHabits(day, user):
-    #throw error if weekday not >1 or <8
+    if not isinstance(day, date):
+        raise TypeError("{} is not a valid date!".format(day))
+    if not isinstance(user, User):
+        raise TypeError("{} is not a valid user!".format(user))
     weekDay = day.isoweekday()
     habitsUser = Habit.objects.filter(creator=user, creationDate__lte=day)
 
@@ -90,7 +96,17 @@ def getDailyHabits(day, user):
     else:
         habits = habitsUser.filter(sunday=True)
     
+    habits = list(habits)
+
+    # In the (unlikely) case that a user adds earlier days than the creation date
+    for habit in Habit.objects.filter(creator=user, creationDate__gt=day):
+        if earlierCompleted(habit, day):
+            habits.append(habit)
+    
     return habits
+
+def earlierCompleted(habit, day):
+    return habit.completedToday(day)
 
 def findHabit(pk):
     return Habit.objects.get(pk=pk)
@@ -98,8 +114,10 @@ def findHabit(pk):
 def toggleCompleteHabit(habit, dateArg):
     habit.toggleCompleteToday(dateArg)
 
-def getDisabledDaysHabit(habit):
-    frequencyArray = habit.frequencyToArray()
+def getDisabledDaysHabit(habitArg):
+    if not isinstance(habitArg, Habit):
+        raise TypeError("{} is not a habit!".format(habitArg))
+    frequencyArray = habitArg.frequencyToArray()
     disabledDays = []
     for iteration, day in enumerate(frequencyArray):
         if not day:
@@ -109,13 +127,19 @@ def getDisabledDaysHabit(habit):
                 disabledDays.append(iteration + 1)
     return disabledDays
 
-def getYearStreak(habit, year):
+def getYearStreak(habitArg, year):
+    if not isinstance(habitArg, Habit):
+        raise TypeError("{} is not a habit!".format(habitArg))
+    if not isinstance(year, int):
+        raise ValueError("{} is not a valid year!".format(year))
     days = []
-    for streak in habit.getStreaks():
+    for streak in habitArg.getYearStreaks(year):
         start = streak.startDate
-        days.append(start)
+        if start.year == year:
+            days.append(start)
         end = streak.endDate
         while start != end:
             start = streak.nextFrequencyDate(start)
-            days.append(start)
+            if start.year == year:
+                days.append(start)
     return days

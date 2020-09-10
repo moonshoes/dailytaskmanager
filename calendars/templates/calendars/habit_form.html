@@ -14,31 +14,25 @@
     {% for field in form %}
         {% if field == form.iconColor %}
             <div class="form-group {% if field.errors %} invalid {% endif %}">
-                <label class="radio-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% for radio in field %}
-                    <div class="form-check-inline icon-radio">
-                        <span style="form-check-input">{{ radio.tag }}</span>
-                        <label 
-                            {% comment %} style="border: 2px solid {{ radio.choice_label }}" {% endcomment %}
-                            {% comment %} onmouseover="this.style.backgroundColor='{{ radio.choice_label }}'"
-                            onmouseout="this.style.backgroundColor=''" {% endcomment %}
-                            class="form-check-label" 
-                            for="{{ radio.id_for_label }}">
-                            {{ radio.choice_label }}
-                        </label>
-                    </div>
-                {% endfor %}
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
+                {% render_field field class="form-control" type="color" %}
                 {% for error in field.errors %}
                     <p class="help-block text-danger">{{ error }}</p>
                 {% endfor %}
             </div>
         {% elif field == form.frequencyChoice %}
             <div class="form-group {% if field.errors %} invalid {% endif %}">
-                <label class="radio-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <label class="radio-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
                 {% for radio in field %}
                     <div class="form-check-inline">
                         <span style="form-check-input">{{ radio.tag }}</span>
-                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                        <label class="form-check-label ml-1" for="{{ radio.id_for_label }}">
                              {{ radio.choice_label }}
                         </label>
                     </div>
@@ -50,11 +44,13 @@
         {% elif field == form.personalisedFrequency %}
             <div id="personalised" class="form-group {% if field.errors %} invalid {% endif %}">
                 {% for radio in field %}
-                    <div class="form-check-inline">
-                        <span style="form-check-input">{{ radio.tag }}</span>
-                        <label class="form-check-label" for="{{ radio.id_for_label }}">
-                            {{ radio.choice_label }}
-                        </label>
+                    <div class="form-check-inline radio-frequency">
+                        {{ radio.tag }}
+                        <div class="checkmark">
+                            <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
                     </div>
                 {% endfor %}
                 {% for error in field.errors %}
@@ -63,7 +59,10 @@
             </div>
         {% else %}
             <div class="form-group {% if field.errors %} invalid {% endif %}">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
                 {% render_field field class="form-control" %}
                 {% for error in field.errors %}
                     <p class="help-block text-danger">{{ error }}</p>
@@ -71,6 +70,25 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var $frequency = $("input[type=radio][name=frequencyChoice]");
+
+            if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $("#personalised").css('visibility', 'visible');
+                }
+
+            $(document).on("click", $frequency, function() {
+                if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
+                    $("#personalised").css('visibility', 'visible');
+                } else {
+                    $("#personalised").css('visibility', 'hidden');
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
 
 {% block footerButton %}

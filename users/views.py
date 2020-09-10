@@ -1,18 +1,26 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth import update_session_auth_hash
+from .models import UserSettings
+from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from bootstrap_modal_forms.generic import (
     BSModalCreateView, 
     BSModalLoginView,
     BSModalReadView,
-    BSModalUpdateView
+    BSModalUpdateView,
+    BSModalDeleteView,
+    BSModalFormView
 )
+from bootstrap_modal_forms.mixins import PassRequestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from users.forms import (
     CustomRegistrationForm, 
     CustomAuthenticationForm,
-    UserUpdateForm
+    UserUpdateForm,
+    UserSettingsForm
 )
 
 class RegistrationView(BSModalCreateView):
@@ -29,7 +37,7 @@ class CustomLoginView(BSModalLoginView):
     success_message = "Welcome! You've successfully logged in."
 
     def get_success_url(self):
-        return self.request.GET.get('next', '/')
+        return reverse_lazy('calendars-home')
 
 class UserDetailView(LoginRequiredMixin, BSModalReadView):
     model = User
@@ -49,3 +57,21 @@ class UserUpdateView(LoginRequiredMixin, BSModalUpdateView):
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')
+
+class UserSettingsUpdateView(BSModalUpdateView):
+    model = UserSettings
+    form_class = UserSettingsForm
+    success_message = "Your settings have been saved!"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class UserDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = User
+    success_message = "Thank you for using DailyTaskManager! We're sad to see you go :("
+    template_name = 'users/confirm_account_deletion.html'
+    success_url = reverse_lazy('calendars-home')

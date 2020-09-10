@@ -23,7 +23,21 @@ urlpatterns = [
     path('register/', users_views.RegistrationView.as_view(), name='register'),
     path('login/', users_views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(
+            template_name='users/password_reset_form.html'
+        ), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+            template_name='users/password_reset_done.html'
+        ), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(
+            template_name='users/password_reset_confirm.html'
+        ), name='password_reset_confirm'),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+            template_name='users/password_reset_complete.html'
+        ), name='password_reset_complete'),
     path('user/<int:pk>/', users_views.UserDetailView.as_view(), name='user-detail'),
-    path('user/<int:pk>/update', users_views.UserUpdateView.as_view(), name='user-update'),
+    path('user/<int:pk>/update/', users_views.UserUpdateView.as_view(), name='user-update'),
+    path('user/<int:pk>/delete/', users_views.UserDeleteView.as_view(), name='user-delete'),
+    path('settings/<int:pk>/update/', users_views.UserSettingsUpdateView.as_view(), name='settings-update'),
     path('', include('calendars.urls')),
 ]

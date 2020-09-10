@@ -1,0 +1,24 @@
+{% extends 'calendars/baseModal.html' %}
+
+{% block formBeginning %}
+    <form method="post" action="">
+        {% csrf_token %}
+{% endblock %}
+
+{% block modalTitle %}
+    Confirm account deletion
+{% endblock %}
+
+{% block modalBody %}
+    <p>Are you sure you want to delete your account? This removes all your information and calendar entries!</p>
+{% endblock %}
+
+{% block footerButton %}
+    <button type="submit" class="btn btn-danger">
+        Yes, I want to delete my account.
+    </button>
+{% endblock %}
+
+{% block formEnd %}
+    </form>
+{% endblock %}

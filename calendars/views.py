@@ -1,13 +1,10 @@
 import calendar, datetime
-
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView
-from .models import Habit
-
 from bootstrap_modal_forms.generic import (
     BSModalCreateView, 
     BSModalReadView,
@@ -15,39 +12,35 @@ from bootstrap_modal_forms.generic import (
     BSModalDeleteView,
     BSModalFormView
 )
-
 from calendars.models import Task, Event, Habit, Reward, RewardStreak
-from calendars.forms import TaskForm, EventForm, HabitForm, RewardForm
-from calendars.functions.calendarFunctions import (
-    getPreviousDay,
-    getPreviousMonth,
-    getPreviousWeek,
-    getNextDay,
-    getNextMonth,
-    getNextWeek,
-    getCurrentWeek,
-    getYearList,
-    getNextHour
-)
-from calendars.functions.modelFunctions import (
-    getWeeklyTasks, 
-    getMonthlyEntries,
-    getDailyEvents,
-    getWeeklyEntries,
-    findTask,
-    toggleCompleteTask,
-    findHabit,
-    toggleCompleteHabit
-)
-import calendars.functions.modelFunctions as modelFunctions
-from .forms import PreviousCompletedHabitDaysForm
+from users.models import UserSettings
+from calendars.forms import TaskForm, EventForm, HabitForm, RewardForm, PreviousCompletedHabitDaysForm
+from calendars.functions import modelFunctions, calendarFunctions
 
+
+# ==============
+# CALENDAR VIEWS
+# ==============
 def home(request):
-    return redirect('calendars-month')
+    if not request.user.is_anonymous:
+        landing = request.user.usersettings.landingPage
+        if landing == "year":
+            return redirect('calendars-year')
+        elif landing == "month":
+            return redirect('calendars-month')
+        elif landing == "week":
+            return redirect('calendars-week')
+        elif landing == "day":
+            return redirect('calendars-day')
+    else:
+        return redirect('calendars-month')
 
 def monthly(request, yearArg=-1, monthArg=-1):
     try:
-        cal = calendar.Calendar(0) #0 is the default!
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         today = datetime.date.today()
         if yearArg == -1 and monthArg == -1:
             year = today.year
@@ -67,15 +60,15 @@ def monthly(request, yearArg=-1, monthArg=-1):
 
         context = {
             'today': datetime.date.today(),
-            'prevMonth': getPreviousMonth(year, month),
+            'prevMonth': calendarFunctions.getPreviousMonth(year, month),
             'month': calendar.month_name[month],
-            'nextMonth': getNextMonth(year, month),
+            'nextMonth': calendarFunctions.getNextMonth(year, month),
             'year': year,
             'monthList': monthList
         }
 
         if not request.user.is_anonymous:
-            context['monthList'] = getMonthlyEntries(monthList, request.user)
+            context['monthList'] = modelFunctions.getMonthlyEntries(monthList, request.user)
             context['dailyTasks'] = modelFunctions.getDailyTasks(today, request.user)
             context['dailyHabits'] = modelFunctions.getDailyHabits(today, request.user)
 
@@ -83,18 +76,21 @@ def monthly(request, yearArg=-1, monthArg=-1):
 
 def yearly(request, yearArg=-1):
     try:
-        cal = calendar.Calendar(0)
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         today = datetime.date.today()
         if yearArg == -1:
             year = today.year
         else:
             year = yearArg
-        yearList = getYearList(year, cal)
+        yearList = calendarFunctions.getYearList(year, cal)
     except InvalidYearNumber as invalidYearError:
         messages.warning(request, invalidYearError)
         today = datetime.date.today()
         year = today.year
-        yearList = getYearList(year, cal)
+        yearList = calendarFunctions.getYearList(year, cal)
     finally:
         context = {
             'today': datetime.date.today(),
@@ -120,8 +116,8 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
         messages.warning(request, "{}/{}/{} isn't a valid date!".format(yearArg, monthArg, dayArg))
         today = datetime.date.today()
     finally:
-        prevDay = getPreviousDay(today)
-        nextDay = getNextDay(today)
+        prevDay = calendarFunctions.getPreviousDay(today)
+        nextDay = calendarFunctions.getNextDay(today)
 
         context = {
             'prevDay': prevDay,
@@ -134,14 +130,17 @@ def daily(request, yearArg=-1, monthArg=-1, dayArg=-1):
             context['dailyTasks'] = modelFunctions.getDailyTasks(datetime.date.today(), request.user)
             context['dayTasks'] = modelFunctions.getDailyTasks(today, request.user)
             context['dailyHabits'] = modelFunctions.getDailyHabits(datetime.date.today(), request.user)
-            context['dailyEvents'] = getDailyEvents(today, request.user)
+            context['dailyEvents'] = modelFunctions.getDailyEvents(today, request.user)
             context['dayHabits'] = modelFunctions.getDailyHabits(today, request.user)
 
         return render(request, 'calendars/daily.html', context)
 
 def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
     try:
-        cal = calendar.Calendar(0)
+        if not request.user.is_anonymous:
+            cal = calendar.Calendar(request.user.usersettings.firstWeekday)
+        else:
+            cal = calendar.Calendar(0) #0 is the default, which is a monday!
         if yearArg == -1 and monthArg == -1 and dayArg == -1:
             today = datetime.date.today()
         else:
@@ -150,9 +149,9 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         messages.warning(request, "{}/{}/{} isn't a valid date!".format(yearArg, monthArg, dayArg))
         today = datetime.date.today()
     finally:
-        prevWeek = getPreviousWeek(today)
-        nextWeek = getNextWeek(today)
-        currentWeek = getCurrentWeek(today, cal)
+        prevWeek = calendarFunctions.getPreviousWeek(today)
+        nextWeek = calendarFunctions.getNextWeek(today)
+        currentWeek = calendarFunctions.getCurrentWeek(today, cal)
         
         context = {
             'today': datetime.date.today(),
@@ -164,26 +163,62 @@ def weekly(request, yearArg=-1, monthArg=-1, dayArg=-1):
         if not request.user.is_anonymous:
             context['dailyTasks'] = modelFunctions.getDailyTasks(datetime.date.today(), request.user)
             context['dailyHabits'] = modelFunctions.getDailyHabits(datetime.date.today(), request.user)
-            context['currentWeek'] = getWeeklyEntries(currentWeek, request.user)
+            context['currentWeek'] = modelFunctions.getWeeklyEntries(currentWeek, request.user)
 
         return render(request, 'calendars/weekly.html', context)
 
+# This is for both clicking on a day in the yearly overview
+# and clicking on the "read more" button in the monthly overview
+def DayDetailView(request, yearArg, monthArg, dayArg):
+    try:
+        today = datetime.date(yearArg, monthArg, dayArg)
+    except ValueError as error:
+        messages.warning(request, "{}/{}/{} isn't a valid date!".format(yearArg, monthArg, dayArg))
+        today = datetime.date.today()
+    finally:
+        next = request.GET.get('next', '/')
+
+        context = {
+            'next': next,
+            'today': today,
+            'tasks': modelFunctions.getDailyTasks(today, request.user),
+            'events': modelFunctions.getDayEvents(today, request.user),
+            'habits': modelFunctions.getDailyHabits(today, request.user)
+        }
+
+        return render(request, 'calendars/day.html', context)
+
+# This is used for the overflow in the weekly overview
+def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
+    try:
+        hour = datetime.datetime(yearArg, monthArg, dayArg, hourArg)
+    except ValueError as error:
+        messages.warning(request, "{}/{}/{} {}:00 isn't a valid datetime!".format(yearArg, monthArg, dayArg, hourArg))
+        hour = datetime.now()
+    finally:
+        next = request.GET.get('next', '/')
+
+        context = {
+            'next': next,
+            'hour': hour,
+            'nextHour': calendarFunctions.getNextHour(hour),
+            'events': Event.objects.filter(
+                    startDate__lte=hour,
+                    endDate__gt=hour,
+                    creator=request.user
+                )
+        }
+
+        return render(request, 'calendars/hour.html', context)
+
+
+# ==========
+# TASK VIEWS
+# ==========
 class TaskCreateView(LoginRequiredMixin, BSModalCreateView):
     model = Task
     form_class = TaskForm
     success_message = "A new task has been created!"
-
-    def form_valid(self, form):
-        form.instance.creator = self.request.user
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.request.GET.get('next', '/')
-
-class EventCreateView(LoginRequiredMixin, BSModalCreateView):
-    model = Event
-    form_class = EventForm
-    success_message = "A new event has been created!"
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -222,6 +257,47 @@ class TaskDetailView(LoginRequiredMixin, BSModalReadView):
         context['next'] = next
         return context
 
+class TaskUpdateView(LoginRequiredMixin, BSModalUpdateView):
+    model = Task
+    form_class = TaskForm
+    success_message = "The task has been updated!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class TaskDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = Task
+    success_message = "The task has been deleted!"
+    template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+def toggleCompleteTask(request, pk):
+    task = modelFunctions.findTask(pk)
+    modelFunctions.toggleCompleteTask(task)
+    next = request.GET.get('next', '/')
+    return redirect(next)
+
+
+# ===========
+# EVENT VIEWS
+# ===========
+class EventCreateView(LoginRequiredMixin, BSModalCreateView):
+    model = Event
+    form_class = EventForm
+    success_message = "A new event has been created!"
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
 
 class FutureEventsListView(LoginRequiredMixin, ListView):
     model = Event
@@ -260,18 +336,6 @@ class EventDetailView(LoginRequiredMixin, BSModalReadView):
         context['next'] = next
         return context
 
-class TaskUpdateView(LoginRequiredMixin, BSModalUpdateView):
-    model = Task
-    form_class = TaskForm
-    success_message = "The task has been updated!"
-
-    def form_valid(self, form):
-        form.instance.creator = self.request.user
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.request.GET.get('next', '/')
-
 class EventUpdateView(LoginRequiredMixin, BSModalUpdateView):
     model = Event
     form_class = EventForm
@@ -284,14 +348,6 @@ class EventUpdateView(LoginRequiredMixin, BSModalUpdateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-class TaskDeleteView(LoginRequiredMixin, BSModalDeleteView):
-    model = Task
-    success_message = "The task has been deleted!"
-    template_name = 'calendars/confirm_delete.html'
-
-    def get_success_url(self):
-        return self.request.GET.get('next', '/')
-
 class EventDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Event
     success_message = "The event has been deleted!"
@@ -300,7 +356,10 @@ class EventDeleteView(LoginRequiredMixin, BSModalDeleteView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-#Habits
+
+# ===========
+# HABIT VIEWS
+# ===========
 class HabitListView(LoginRequiredMixin, ListView):
     model = Habit
     context_object_name = 'habits'
@@ -424,59 +483,8 @@ class HabitUpdateView(LoginRequiredMixin, BSModalUpdateView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
-def DayDetailView(request, yearArg, monthArg, dayArg):
-    try:
-        today = datetime.date(yearArg, monthArg, dayArg)
-    except ValueError as error:
-        messages.warning(request, "{}/{}/{} isn't a valid date!".format(yearArg, monthArg, dayArg))
-        today = datetime.date.today()
-    finally:
-        next = request.GET.get('next', '/')
-
-        context = {
-            'next': next,
-            'today': today,
-            'tasks': modelFunctions.getDailyTasks(today, request.user),
-            'events': Event.objects.filter(
-                    startDate__date__lte=today,
-                    endDate__date__gte=today,
-                    creator=request.user
-                ),
-            'habits': modelFunctions.getDailyHabits(today, request.user)
-        }
-
-        return render(request, 'calendars/day.html', context)
-
-def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
-    try:
-        hour = datetime.datetime(yearArg, monthArg, dayArg, hourArg)
-    except ValueError as error:
-        messages.warning(request, "{}/{}/{} {}:00 isn't a valid datetime!".format(yearArg, monthArg, dayArg, hourArg))
-        hour = datetime.now()
-    finally:
-        next = request.GET.get('next', '/')
-
-        context = {
-            'next': next,
-            'hour': hour,
-            'nextHour': getNextHour(hour),
-            'events': Event.objects.filter(
-                    startDate__lte=hour,
-                    endDate__gt=hour,
-                    creator=request.user
-                )
-        }
-
-        return render(request, 'calendars/hour.html', context)
-
-def toggleCompleteTask(request, pk):
-    task = findTask(pk)
-    modelFunctions.toggleCompleteTask(task)
-    next = request.GET.get('next', '/')
-    return redirect(next)
-
 def toggleCompleteHabit(request, pk):
-    habit = findHabit(pk)
+    habit = modelFunctions.findHabit(pk)
     today = datetime.date.today()
     modelFunctions.toggleCompleteHabit(habit, today)
 
@@ -484,16 +492,13 @@ def toggleCompleteHabit(request, pk):
     return redirect(next)
 
 class CompleteEarlierDaysHabit(BSModalFormView):
-    # habit = findHabit(self.habit_pk)
-    # disabledDays = modelFunctions.getDisabledDaysHabit(habit)
-    # today = datetime.date.today()
     form_class = PreviousCompletedHabitDaysForm
     template_name = 'calendars/habit_previous_days_form.html'
     success_message = "You've successfully added previous completed dates!"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.habit = findHabit(self.request.GET.get('habit'))
+        self.habit = modelFunctions.findHabit(self.request.GET.get('habit'))
         kwargs['disabledDays'] = modelFunctions.getDisabledDaysHabit(self.habit)
         kwargs['maxDate'] = datetime.date.today()
         return kwargs
@@ -513,14 +518,14 @@ def habitYearStreak(request, pk, yearArg=-1):
             year = today.year
         else:
             year = yearArg
-        yearList = getYearList(year, cal)
+        yearList = calendarFunctions.getYearList(year, cal)
     except InvalidYearNumber as invalidYearError:
         messages.warning(request, invalidYearError)
         today = datetime.date.today()
         year = today.year
-        yearList = getYearList(year, cal)
+        yearList = calendarFunctions.getYearList(year, cal)
     finally:
-        habit = findHabit(pk)
+        habit = modelFunctions.findHabit(pk)
         context = {
             'today': datetime.date.today(),
             'prevYear': year - 1,
@@ -535,19 +540,22 @@ def habitYearStreak(request, pk, yearArg=-1):
 
         return render(request, 'calendars/habit_year_streak.html', context)
 
+# ============
+# REWARD VIEWS
+# ============
 class RewardCreateView(BSModalCreateView):
     model = Reward
     form_class = RewardForm
     success_message = "You've added a new reward!"
 
     def form_valid(self, form):
-        habit = findHabit(self.request.GET.get('habit'))
+        habit = modelFunctions.findHabit(self.request.GET.get('habit'))
         form.instance.habit = habit
         return super().form_valid(form)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['habit'] = findHabit(self.request.GET.get('habit'))
+        context['habit'] = modelFunctions.findHabit(self.request.GET.get('habit'))
         return context
 
     def get_success_url(self):
@@ -578,6 +586,7 @@ class UnlockedRewardListView(LoginRequiredMixin, ListView):
         context['today'] = today
         return context
 
+# Deletes unlocked rewards because a user has cashed them in
 class UnlockedRewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = RewardStreak
     success_message = "Your reward has been completed!"
@@ -586,10 +595,27 @@ class UnlockedRewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
     def get_success_url(self):
         return self.request.GET.get('next', '/')
 
+# Deletes entire reward, prevents user from unlocking new rewards for it
 class RewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Reward
     success_message = "Your reward has been deleted!"
     template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class RewardUpdateView(LoginRequiredMixin, BSModalUpdateView):
+    model = Reward
+    form_class = RewardForm
+    success_message = "The reward has been updated!"
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['habit'] = modelFunctions.findHabit(self.request.GET.get('habit'))
+        return context
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')

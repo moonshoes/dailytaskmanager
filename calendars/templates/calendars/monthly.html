@@ -48,29 +48,6 @@ active
                         data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
                         {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
                     </button>
-                    {% comment %} {% if event.startDate|multipleDayEvent:event.endDate %}
-                        {% if forloop.parentloop.counter|beginningOfMonth or forloop.parentloop.counter|beginningOfWeek %}
-                            <button 
-                                class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
-                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
-                            </button>
-                        {% elif event.startDate|startsToday:day.day %}
-                            <button 
-                                class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
-                                style="grid-column: {{ forloop.parentloop.counter|columnLine }} / span 2;"
-                                data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                                {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
-                            </button>
-                        {% endif %}
-                    {% endif %}
-                    {% if event.startDate|sameDayEvent:event.endDate %}
-                        <button 
-                            class="task-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
-                            data-form-url="{% url 'event-detail' event.pk %}?next={{ request.path }}">
-                            {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
-                        </button>
-                    {% endif %} {% endcomment %}
                 {% endfor %}
                 {% for task in day.taskList %}
                     <button 
@@ -81,7 +58,14 @@ active
                 {% endfor %}
                 {% for habit in day.habitList %}
                     <button 
-                        class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:day.day %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                        class="task-wrapper btn px-1 py-0  btn-sm modal-trigger habit-wrapper"
+                        {% if habit|habitCompletedToday:day.day %}
+                            style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                            onmouseover="this.style.color='#fff'; this.style.backgroundColor='{{ habit.iconColor }}'"
+                            onmouseleave="this.style.color='{{ habit.iconColor }}'; this.style.backgroundColor=''; this.style.borderColor='{{ habit.iconColor }}';"
+                        {% else %}
+                            style="background-color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                        {% endif %}
                         data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
                         {% if habit|habitCompletedToday:day.day %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:day.day %}</s>{% endif %}
                     </button>
@@ -94,40 +78,6 @@ active
                 {% endif %}
             </div>
         {% endfor %}
-        {% comment %} <div style="grid-column: 3;
-                grid-row: second-line;">
-        <button 
-            class="task-wrapper btn px-1 py-0 btn-danger btn-sm"
-            style="grid-column: 3 / span 2;"
-            data-form-url="#">
-            test1!
-        </button>
-        <button 
-            class="task-wrapper btn px-1 py-0 btn-danger btn-sm"
-            data-form-url="#">
-            test!
-        </button>
-        </div> {% endcomment %}
     </div>
-    {% comment %} <div class="row h-100 row-cols-7">
-        {% for day in monthList %}
-            <div class="col border overflow-auto">
-                <h6 class="text-center">
-                    {% if forloop.counter <= 7 %}
-                        {{ day.day|date:"D, j" }}
-                    {% else %}
-                        {{ day.day|date:"j" }}
-                    {% endif %}
-                </h6>
-                {% for task in day.taskList %}
-                    <button 
-                        class="task-wrapper btn {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                        data-form-url="{% url 'task-detail' task.pk %}?next={{ request.path }}">
-                        {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
-                    </button>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div> {% endcomment %}
 </div>
 {% endblock content %}

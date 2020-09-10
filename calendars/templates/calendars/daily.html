@@ -46,7 +46,14 @@ active
             {% endfor %}
             {% for habit in dayHabits %}
                 <button 
-                    class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:currentDay %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    class="task-wrapper btn px-1 py-0  btn-sm modal-trigger habit-wrapper"
+                    {% if habit|habitCompletedToday:currentDay %}
+                        style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                        onmouseover="this.style.color='#fff'; this.style.backgroundColor='{{ habit.iconColor }}'"
+                        onmouseleave="this.style.color='{{ habit.iconColor }}'; this.style.backgroundColor=''; this.style.borderColor='{{ habit.iconColor }}';"
+                    {% else %}
+                        style="background-color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                    {% endif %}
                     data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
                     {% if habit|habitCompletedToday:currentDay %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:currentDay %}</s>{% endif %}
                 </button>

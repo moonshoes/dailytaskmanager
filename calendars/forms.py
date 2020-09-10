@@ -26,7 +26,8 @@ class EventForm(BSModalModelForm):
         label='Start date',
         widget=DateTimePicker(
                 options={
-                    'format': 'DD/MM/YYYY HH:mm'
+                    'format': 'DD/MM/YYYY HH:mm',
+                    'toolbarPlacement': 'top'
                 },
                 attrs={
                     'append': 'fa fa-calendar',
@@ -36,7 +37,8 @@ class EventForm(BSModalModelForm):
         label='End date',
         widget=DateTimePicker(
                 options={
-                    'format': 'DD/MM/YYYY HH:mm'
+                    'format': 'DD/MM/YYYY HH:mm',
+                    'toolbarPlacement': 'top'
                 },
                 attrs={
                     'append': 'fa fa-calendar',
@@ -70,6 +72,9 @@ class HabitForm(BSModalModelForm):
     personalisedFrequency = forms.CharField(
         required=False,
         widget=forms.CheckboxSelectMultiple(
+            attrs={
+                'class': 'form-check-input',
+            },
             choices=[
                 ('monday', 'M'),
                 ('tuesday', 'Tu'),
@@ -85,16 +90,10 @@ class HabitForm(BSModalModelForm):
         model = Habit
         fields = ('name', 'description', 'iconColor')
         labels = {
-            'iconColor': 'Icon'
+            'iconColor': 'Display color'
         }
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2}),
-            'iconColor': forms.RadioSelect(
-                choices=[
-                    ('#ff0000', 'red'), #red
-                    ('#00cc00', 'green'), #green
-                    ('#0066ff', 'blue'), #blue
-                    ('#ffff00', 'yellow')]) #yellow
+            'description': forms.Textarea(attrs={'cols': 10, 'rows': 2})
         }
 
     def __init__(self, *args, **kwargs):
@@ -134,8 +133,6 @@ class HabitForm(BSModalModelForm):
             if not personalisedFrequency:
                 msg = "At least one day should be selected."
                 self.add_error('personalisedFrequency', msg)
-            else:
-                print(personalisedFrequency)
 
 class PreviousCompletedHabitDaysForm(BSModalForm):
     dates = forms.CharField()
@@ -164,8 +161,10 @@ class PreviousCompletedHabitDaysForm(BSModalForm):
     def addPreviousDates(self, habit):
         self.clean()
         cleaned_dates = self.cleaned_data.get("dates")
-        print(cleaned_dates)
-        habit.completeEarlierDays(cleaned_dates)
+        try:
+            habit.completeEarlierDays(cleaned_dates)
+        except (IndexError, ValueError, TypeError) as error:
+            self.add_error('dates', error)
 
 class RewardForm(BSModalModelForm):
     class Meta:

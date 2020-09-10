@@ -61,11 +61,18 @@
                 </div>
                 <div class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'user-detail' user.pk %}?next={{ request.path }}">Hi, {{ user.first_name }}!</a>
+                        <a class="nav-item nav-link modal-trigger cursor-pointer" data-form-url="{% url 'user-detail' user.pk %}?next={{ request.path }}">
+                            Hi, 
+                            {% if user.first_name == "" %}
+                                {{ user.username }}
+                            {% else %}
+                                {{ user.first_name }}!
+                            {% endif %}
+                        </a>
                         <a class="nav-item nav-link" id="logout" href="{% url 'logout' %}">Log out</a>
                     {% else %}
-                        <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'login' %}?next={{ request.path }}">Log in</a>
-                        <a class="nav-item nav-link modal-trigger" data-form-url="{% url 'register' %}?next={{ request.path }}">Register</a>
+                        <a class="nav-item nav-link modal-trigger cursor-pointer" data-form-url="{% url 'login' %}?next={{ request.path }}">Log in</a>
+                        <a class="nav-item nav-link modal-trigger cursor-pointer" data-form-url="{% url 'register' %}?next={{ request.path }}">Register</a>
                     {% endif %}
                 </div>
             </div>
@@ -111,20 +118,17 @@
                             <ul>
                                 {% for habit in dailyHabits %}
                                     <button 
-                                        class="task-wrapper btn px-1 py-0 {% if habit|habitCompletedToday:today %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
-                                        data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
-                                        {% if habit|habitCompletedToday:today %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:today %}</s>{% endif %}
-                                    </button>
-                                    {% comment %} <button 
                                         class="task-wrapper btn px-1 py-0  btn-sm modal-trigger habit-wrapper"
                                         {% if habit|habitCompletedToday:today %}
                                             style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                                            onmouseover="this.style.color='#fff'; this.style.backgroundColor='{{ habit.iconColor }}'"
+                                            onmouseleave="this.style.color='{{ habit.iconColor }}'; this.style.backgroundColor=''; this.style.borderColor='{{ habit.iconColor }}';"
                                         {% else %}
-                                            style="color: #fff; background-color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
+                                            style="background-color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
                                         {% endif %}
                                         data-form-url="{% url 'habit-detail' habit.pk %}?next={{ request.path }}">
-                                        {{ habit }}
-                                    </button> {% endcomment %}
+                                        {% if habit|habitCompletedToday:today %}<s>{% endif %}{{ habit }}{% if habit|habitCompletedToday:today %}</s>{% endif %}
+                                    </button>
                                 {% empty %}
                                     <i>No habits to complete today!</i>
                                 {% endfor %}
@@ -155,30 +159,25 @@
                 });
             });
 
-            $(document).on("click", ".in-modal-trigger", function() {
+            {% comment %} $('#modal').delegate(".in-modal-trigger", "click", function() {
+                $(".in-modal-trigger").modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            }); {% endcomment %}
+
+            {% comment %} $("body").on("click", ".in-modal-trigger", function() {
                 $(this).modalForm({
                     modalID: "#modal",
                     formURL: $(this).data('form-url')
                 });
-            });
+            }); {% endcomment %}
 
             $(document).on("click", ".day-entry-wrapper", function() {
                 $(".day-entry-wrapper").modalForm({
                     modalID: "#modal",
                     formURL: $(this).data('form-url')
                 });
-            });
-
-
-            var $frequency = $("input[type=radio][name=frequencyChoice]");
-
-
-            $(document).on("click", $frequency, function() {
-                if ($("input[name=frequencyChoice]:checked").val() == 'personalised') {
-                    $("#personalised").css('visibility', 'visible');
-                } else {
-                    $("#personalised").css('visibility', 'hidden');
-                }
             });
 
             $(".month-item").each(function() {
