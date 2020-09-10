@@ -1,15 +1,29 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm, PasswordChangeForm
 from django.contrib.auth.models import User
+from django.contrib.auth import login, password_validation
 from .models import UserSettings
 from bootstrap_modal_forms.mixins import PopRequestMixin, CreateUpdateAjaxMixin
-from bootstrap_modal_forms.forms import BSModalModelForm
+from bootstrap_modal_forms.forms import BSModalModelForm, BSModalForm
 from tempus_dominus.widgets import DatePicker, DateTimePicker
 
 class CustomRegistrationForm(PopRequestMixin, CreateUpdateAjaxMixin, UserCreationForm):
+    email = forms.EmailField(required=True)
+
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        fields = ['username', 'first_name', 'email', 'password1', 'password2']
+        labels = {
+            'first_name': 'Name'
+        }
+    
+    def save(self, commit=True):
+        if not self.request.is_ajax():
+            user = super(CreateUpdateAjaxMixin, self).save(commit=commit)
+            login(self.request, user)
+        else:
+            user = super(CreateUpdateAjaxMixin, self).save(commit=False)
+        return user
 
 class CustomAuthenticationForm(AuthenticationForm):
     class Meta:
@@ -21,15 +35,10 @@ class UserUpdateForm(BSModalModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name','email']
-
-class CustomPasswordChangeForm(PopRequestMixin, CreateUpdateAjaxMixin, PasswordChangeForm):
-    def save(self, commit=True):
-        password = self.cleaned_data['new_password1']
-        self.user.set_password(password)
-        if commit:
-            self.user.save()
-        return self.user
+        fields = ['username', 'first_name', 'email']
+        labels = {
+            'first_name': 'Name'
+        }
 
 class UserSettingsForm(BSModalModelForm):
     class Meta:

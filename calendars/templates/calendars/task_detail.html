@@ -37,4 +37,13 @@
     <a role="button" id="toggle-complete-task" class="btn btn-sm btn-primary" href="{% url 'toggle-complete-task' task.pk %}?next={{ next }}">
         {% if task.completed %}Not done? Set to incomplete{% else %}Complete task{% endif %}
     </a>
+
+    <script type="text/javascript">
+        $(".in-modal-trigger").each(function () {
+                $(this).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+    </script>
 {% endblock %}

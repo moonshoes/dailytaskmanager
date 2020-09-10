@@ -1,6 +1,7 @@
 from django import template
 import datetime, operator, pytz
 from calendars.models import Habit, Event
+from calendars.functions import modelFunctions
 
 register = template.Library()
 
@@ -70,6 +71,6 @@ def canBeCompletedToday(habit, date):
     frequencyArray = habit.frequencyToArray()
     return frequencyArray[weekday]
 
-# @register.filter()
-# def columnLine(value):
-#     return operator.mod(value, 7)
+@register.filter()
+def hasCalendarEntries(day, user):
+    return modelFunctions.hasCalendarEntries(day, user)

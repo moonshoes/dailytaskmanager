@@ -182,11 +182,7 @@ def DayDetailView(request, yearArg, monthArg, dayArg):
             'next': next,
             'today': today,
             'tasks': modelFunctions.getDailyTasks(today, request.user),
-            'events': Event.objects.filter(
-                    startDate__date__lte=today,
-                    endDate__date__gte=today,
-                    creator=request.user
-                ),
+            'events': modelFunctions.getDayEvents(today, request.user),
             'habits': modelFunctions.getDailyHabits(today, request.user)
         }
 
@@ -604,6 +600,22 @@ class RewardDeleteView(LoginRequiredMixin, BSModalDeleteView):
     model = Reward
     success_message = "Your reward has been deleted!"
     template_name = 'calendars/confirm_delete.html'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/')
+
+class RewardUpdateView(LoginRequiredMixin, BSModalUpdateView):
+    model = Reward
+    form_class = RewardForm
+    success_message = "The reward has been updated!"
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['habit'] = modelFunctions.findHabit(self.request.GET.get('habit'))
+        return context
 
     def get_success_url(self):
         return self.request.GET.get('next', '/')

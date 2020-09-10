@@ -33,6 +33,13 @@ def getDailyEvents(day, user):
     }
     return events
 
+def getDayEvents(day, user):
+    return Event.objects.filter(
+                    startDate__date__lte=day,
+                    endDate__date__gte=day,
+                    creator=user
+                )
+
 # Entries (Events, Tasks and Habits)
 def getMonthlyEntries(month, user):
     dayEntryList = []

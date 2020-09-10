@@ -1,27 +1,5 @@
 from django.urls import path, include
-from .views import (
-    TaskCreateView, 
-    EventCreateView, 
-    UnfinishedTasksListView,
-    TaskDetailView,
-    FutureEventsListView,
-    EventDetailView,
-    TaskUpdateView,
-    EventUpdateView,
-    TaskDeleteView,
-    EventDeleteView,
-    HabitListView,
-    HabitDetailView,
-    HabitDeleteView,
-    HabitCreateView,
-    HabitUpdateView,
-    CompleteEarlierDaysHabit,
-    RewardCreateView,
-    UnlockedRewardListView,
-    UnlockedRewardDeleteView,
-    RewardDeleteView
-)
-from . import views
+from calendars import views
 
 urlpatterns = [
     #Calendar
@@ -38,33 +16,32 @@ urlpatterns = [
     path('hour/<int:yearArg>/<int:monthArg>/<int:dayArg>/<int:hourArg>/detail/', views.HourDetailView, name='hour-detail'),
 
     #Tasks
-    path('task/new/', TaskCreateView.as_view(), name='task-create'),
-    path('tasks/', UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
-    path('task/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
-    path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='task-update'),
-    path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='task-delete'),
+    path('task/new/', views.TaskCreateView.as_view(), name='task-create'),
+    path('tasks/', views.UnfinishedTasksListView.as_view(), name='unfinished-tasks'),
+    path('task/<int:pk>/', views.TaskDetailView.as_view(), name='task-detail'),
+    path('task/<int:pk>/update/', views.TaskUpdateView.as_view(), name='task-update'),
+    path('task/<int:pk>/delete/', views.TaskDeleteView.as_view(), name='task-delete'),
     path('task/<int:pk>/toggle-complete/', views.toggleCompleteTask, name='toggle-complete-task'),
 
     #Events
-    path('event/new/', EventCreateView.as_view(), name='event-create'),
-    path('events/', FutureEventsListView.as_view(), name='future-events'),
-    path('event/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
-    path('event/<int:pk>/update/', EventUpdateView.as_view(), name='event-update'),
-    path('event/<int:pk>/delete/', EventDeleteView.as_view(), name='event-delete'),
+    path('event/new/', views.EventCreateView.as_view(), name='event-create'),
+    path('events/', views.FutureEventsListView.as_view(), name='future-events'),
+    path('event/<int:pk>/', views.EventDetailView.as_view(), name='event-detail'),
+    path('event/<int:pk>/update/', views.EventUpdateView.as_view(), name='event-update'),
+    path('event/<int:pk>/delete/', views.EventDeleteView.as_view(), name='event-delete'),
 
-    #Habit URLs
-    path('habits/', HabitListView.as_view(), name='list-habits'),
-    path('habit/<int:pk>/', HabitDetailView.as_view(), name='habit-detail'),
-    path('habit/<int:pk>/delete/', HabitDeleteView.as_view(), name='habit-delete'),
-    path('habit/new/', HabitCreateView.as_view(), name='habit-create'),
-    path('habit/<int:pk>/update/', HabitUpdateView.as_view(), name='habit-update'),
+    #Habits
+    path('habits/', views.HabitListView.as_view(), name='list-habits'),
+    path('habit/<int:pk>/', views.HabitDetailView.as_view(), name='habit-detail'),
+    path('habit/<int:pk>/delete/', views.HabitDeleteView.as_view(), name='habit-delete'),
+    path('habit/new/', views.HabitCreateView.as_view(), name='habit-create'),
+    path('habit/<int:pk>/update/', views.HabitUpdateView.as_view(), name='habit-update'),
     path('habit/<int:pk>/toggle-complete/', views.toggleCompleteHabit, name='toggle-complete-habit'),
-    path('habit/set-previous-complete/', CompleteEarlierDaysHabit.as_view(), name='complete-previous-habit'),
+    path('habit/set-previous-complete/', views.CompleteEarlierDaysHabit.as_view(), name='complete-previous-habit'),
     path('habit/<int:pk>/year-streak/<int:yearArg>', views.habitYearStreak, name='habit-year-streak'),
-    path('reward/new/', RewardCreateView.as_view(), name='reward-create'),
-    path('unlocked-rewards/', UnlockedRewardListView.as_view(), name='list-unlocked-rewards'),
-    path('reward/unlocked/<int:pk>/delete/', UnlockedRewardDeleteView.as_view(), name='unlocked-reward-delete'),
-    path('reward/<int:pk>/delete/', RewardDeleteView.as_view(), name='reward-delete'),
-    
-    
+    path('reward/new/', views.RewardCreateView.as_view(), name='reward-create'),
+    path('unlocked-rewards/', views.UnlockedRewardListView.as_view(), name='list-unlocked-rewards'),
+    path('reward/unlocked/<int:pk>/delete/', views.UnlockedRewardDeleteView.as_view(), name='unlocked-reward-delete'),
+    path('reward/<int:pk>/delete/', views.RewardDeleteView.as_view(), name='reward-delete'),
+    path('reward/<int:pk>/update/', views.RewardUpdateView.as_view(), name='reward-update'),
 ]

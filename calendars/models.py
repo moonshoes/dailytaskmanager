@@ -125,7 +125,6 @@ class Habit(CalendarEntry):
             Q(startDate__year=year) |
             Q(endDate__year=year)
         )
-
     
     def completedToday(self, dateArg):
         if not isinstance(dateArg, date):
@@ -405,7 +404,7 @@ class RewardStreak(models.Model):
     def upCounter(self):
         if not self.unlocked:
             self.counter = self.counter + 1
-            if self.counter == self.reward.days:
+            if self.counter >= self.reward.days:
                 self.unlocked = True
                 self.unlockDate = datetime.date.today()
             self.save()

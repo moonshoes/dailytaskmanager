@@ -142,3 +142,10 @@ TEMPUS_DOMINUS_LOCALIZE = 'True'
 LOGOUT_REDIRECT_URL = 'calendars-home'
 
 LOGIN_URL = reverse_lazy('calendars-home')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'dailytaskmngr@gmail.com'
+EMAIL_HOST_PASSWORD = 'nutg8aCUJ3WFfyB'

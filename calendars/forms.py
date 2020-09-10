@@ -26,7 +26,8 @@ class EventForm(BSModalModelForm):
         label='Start date',
         widget=DateTimePicker(
                 options={
-                    'format': 'DD/MM/YYYY HH:mm'
+                    'format': 'DD/MM/YYYY HH:mm',
+                    'toolbarPlacement': 'top'
                 },
                 attrs={
                     'append': 'fa fa-calendar',
@@ -36,7 +37,8 @@ class EventForm(BSModalModelForm):
         label='End date',
         widget=DateTimePicker(
                 options={
-                    'format': 'DD/MM/YYYY HH:mm'
+                    'format': 'DD/MM/YYYY HH:mm',
+                    'toolbarPlacement': 'top'
                 },
                 attrs={
                     'append': 'fa fa-calendar',
@@ -131,8 +133,6 @@ class HabitForm(BSModalModelForm):
             if not personalisedFrequency:
                 msg = "At least one day should be selected."
                 self.add_error('personalisedFrequency', msg)
-            else:
-                print(personalisedFrequency)
 
 class PreviousCompletedHabitDaysForm(BSModalForm):
     dates = forms.CharField()

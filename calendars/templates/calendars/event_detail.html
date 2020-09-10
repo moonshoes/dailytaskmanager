@@ -34,3 +34,12 @@
         <span class="font-weight-bolder">End date:</span> {{ event.endDate }}
     </div>
 </div>
+
+<script type="text/javascript">
+    $(".in-modal-trigger").each(function () {
+            $(this).modalForm({
+                modalID: "#modal",
+                formURL: $(this).data('form-url')
+            });
+        });
+</script>

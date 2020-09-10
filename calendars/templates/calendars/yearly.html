@@ -1,4 +1,5 @@
 {% extends "calendars/base.html" %}
+{% load calendars_filters %}
 
 {% block calendarNavigation %}
 <div class="nav-item navbar-text mr-4">
@@ -32,7 +33,7 @@ active
                 </div>
                 <div class="row no-gutters row-cols-7 text-center">
                     {% for day in month.month %}
-                        <div class="col border rounded modal-trigger
+                        <div class="col border rounded modal-trigger cursor-pointer year-day
                                 {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
                                     text-muted
                                 {% endif %}"

@@ -22,9 +22,9 @@
 {% endblock %}
 
 {% block footerButton %}
-    <button type="button" class="btn btn-sm btn-success in-modal-trigger" data-form-url="{% url 'password_change' %}">
-        Change password
-    </button>
+    <a role="button" class="btn btn-sm btn-success" href="{% url 'password_reset' %}">
+        Reset password
+    </a>
     <button type="button" class="btn btn-sm btn-success in-modal-trigger" data-form-url="{% url 'settings-update' user.usersettings.pk %}?next={{ next }}">
         Change settings
     </button>
@@ -34,4 +34,12 @@
     <button type="button" class="btn btn-sm btn-danger in-modal-trigger" data-form-url="{% url 'user-delete' user.pk %}">
         Delete account
     </button>
+    <script type="text/javascript">
+        $(".in-modal-trigger").each(function () {
+                $(this).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+    </script>
 {% endblock %}

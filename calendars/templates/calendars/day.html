@@ -11,14 +11,14 @@
         {% if events or tasks %}
             {% for event in events %}
                 <button 
-                    class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm modal-trigger" 
+                    class="task-wrapper day-entry-wrapper btn px-1 py-0 btn-primary btn-sm in-modal-trigger" 
                     data-form-url="{% url 'event-detail' event.pk %}?next={{ next }}">
                     {{ event }}: {{ event.startDate|date:"P" }} - {{ event.endDate|date:"P" }}
                 </button>
             {% endfor %}
             {% for task in tasks %}
                 <button 
-                    class="task-wrapper day-entry-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm modal-trigger" 
+                    class="task-wrapper day-entry-wrapper btn px-1 py-0 {% if task.completed %}btn-outline-secondary{% else %}btn-secondary{% endif %} btn-sm in-modal-trigger" 
                     data-form-url="{% url 'task-detail' task.pk %}?next={{ next }}">
                     {% if task.completed %}<s>{% endif %}{{ task }}{% if task.completed %}</s>{% endif %}
                 </button>
@@ -34,7 +34,7 @@
         </div>
         {% for habit in habits %}
             <button 
-                class="task-wrapper btn px-1 py-0  btn-sm modal-trigger habit-wrapper"
+                class="task-wrapper btn px-1 py-0  btn-sm in-modal-trigger habit-wrapper"
                 {% if habit|habitCompletedToday:today %}
                     style="color: {{ habit.iconColor }}; border-color: {{ habit.iconColor }};"
                     onmouseover="this.style.color='#fff'; this.style.backgroundColor='{{ habit.iconColor }}'"
@@ -48,4 +48,13 @@
         {% endfor %}
     {% endif %}
     </div>
+
+    <script type="text/javascript">
+        $(".in-modal-trigger").each(function () {
+                $(this).modalForm({
+                    modalID: "#modal",
+                    formURL: $(this).data('form-url')
+                });
+            });
+    </script>
 </div>
