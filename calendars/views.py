@@ -202,11 +202,7 @@ def HourDetailView(request, yearArg, monthArg, dayArg, hourArg):
             'next': next,
             'hour': hour,
             'nextHour': calendarFunctions.getNextHour(hour),
-            'events': Event.objects.filter(
-                    startDate__lte=hour,
-                    endDate__gt=hour,
-                    creator=request.user
-                )
+            'events': modelFunctions.getHourEvents(hour, request.user)
         }
 
         return render(request, 'calendars/hour.html', context)
@@ -234,7 +230,7 @@ class UnfinishedTasksListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Task.objects.filter(creator=user, completed=False).order_by('date')
+        return modelFunctions.getUnfinishedTasks(user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -244,6 +240,7 @@ class UnfinishedTasksListView(LoginRequiredMixin, ListView):
 
         context['dailyTasks'] = modelFunctions.getDailyTasks(today, user)
         context['dailyHabits'] = modelFunctions.getDailyHabits(today, user)
+        context['today'] = today
         return context
 
 class TaskDetailView(LoginRequiredMixin, BSModalReadView):
@@ -308,7 +305,7 @@ class FutureEventsListView(LoginRequiredMixin, ListView):
         user = self.request.user
         now = timezone.now()
         
-        return Event.objects.filter(creator=user, endDate__gte=now).order_by('startDate')
+        return modelFunctions.getFutureEvents(now, user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -366,7 +363,7 @@ class HabitListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Habit.objects.filter(creator=user).order_by('creationDate')
+        return modelFunctions.getHabits(user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
