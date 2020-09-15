@@ -16,6 +16,12 @@ def findTask(pk):
 def toggleCompleteTask(task):
     task.toggleCompleted()
 
+def getUnfinishedTasks(user):
+    return Task.objects.filter(
+            creator=user, 
+            completed=False
+        ).order_by('date')
+
 
 # Events
 def getDailyEvents(day, user):
@@ -39,6 +45,17 @@ def getDayEvents(day, user):
                     endDate__date__gte=day,
                     creator=user
                 )
+def getHourEvents(hour, user):
+    return Event.objects.filter(
+                    startDate__lte=hour,
+                    endDate__gt=hour,
+                    creator=user
+                )
+def getFutureEvents(now, user):
+    return Event.objects.filter(
+            creator=user, 
+            endDate__gte=now
+        ).order_by('startDate')
 
 # Entries (Events, Tasks and Habits)
 def getMonthlyEntries(month, user):
@@ -104,6 +121,11 @@ def getDailyHabits(day, user):
             habits.append(habit)
     
     return habits
+
+def getHabits(user):
+    return Habit.objects.filter(
+            creator=user
+        ).order_by('creationDate')
 
 def earlierCompleted(habit, day):
     return habit.completedToday(day)
