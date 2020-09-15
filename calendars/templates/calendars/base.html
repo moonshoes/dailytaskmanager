@@ -29,8 +29,8 @@
                     <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                {% if user.is_authenticated %}
-                    <div class="navbar-nav mr-auto">
+                <div class="navbar-nav mr-auto">
+                        {% if user.is_authenticated %}
                         <div class="dropdown nav-item form-inline">
                             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownCreateButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Create
@@ -43,8 +43,8 @@
                         </div>
                         <a class="nav-item nav-link" href="{% url 'list-habits' %}">Habits</a>
                         <a class="nav-item nav-link" href="{% url 'future-events' %}">Events</a>
-                    </div>
-                {% endif %}
+                        {% endif %}
+                </div>
                 <div class="navbar-nav mr-auto">
                     {% block calendarNavigation %} {% endblock %}
                     <div class="dropdown nav-item form-inline">
@@ -78,7 +78,7 @@
             </div>
         </nav>
 
-        <div class="container-fluid h-90">
+        <div class="container-fluid h-85">
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }}">

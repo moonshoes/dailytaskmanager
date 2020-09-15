@@ -37,7 +37,9 @@ active
                                 {% if forloop.parentloop.counter|stringformat:"d" != day|date:"n" %}
                                     text-muted
                                 {% endif %}"
-                            data-form-url="{% url 'day-detail' day|date:"Y" day|date:"n" day|date:"j" %}?next={{ request.path }}">
+                            {% if user.is_authenticated %}
+                                data-form-url="{% url 'day-detail' day|date:"Y" day|date:"n" day|date:"j" %}?next={{ request.path }}"
+                            {% endfor %}>
                             {{ day|date:"j" }}
                         </div>
                     {% endfor %}
