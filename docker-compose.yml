@@ -10,7 +10,7 @@ services:
             - "3307:3307"
         environment:
             - MYSQL_ROOT_PASSWORD=secret123
-            - MSQL_DATABASE=dango_app
+            - MYSQL_DATABASE=django_app
             - MYSQL_USER=django_app
             - MYSQL_PASSWORD=django_app123
     web:

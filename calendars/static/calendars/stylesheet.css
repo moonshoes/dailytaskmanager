@@ -16,6 +16,10 @@
     height: 40% !important;
 }
 
+.h-85 {
+    height: 85% !important;
+}
+
 .h-90 {
     height: 90% !important;
 }
@@ -177,6 +181,10 @@ button.icon-button {
 .modal-header .icon-button {
     padding: 1rem 0;
     margin: -1rem 0 -1rem .5rem;
+}
+
+.radio-frequency {
+    margin-right: 1.5rem;
 }
 
 .radio-frequency input {
